@@ -6,6 +6,11 @@ on:
     - cron: "0 22 * * *"
     - cron: "0 10 * * *"
   workflow_dispatch:
+    inputs:
+      seed_latest:
+        description: "판매중인 회차가 없으면 최근 마감 회차로 채우기"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -28,7 +33,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: 회차 수집
-        run: python scripts/fetch_games.py
+        run: python scripts/fetch_games.py ${{ inputs.seed_latest && '--seed-latest' || '' }}
 
       - name: 변경 시에만 커밋 & 푸시
         run: |
