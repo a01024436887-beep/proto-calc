@@ -6,7 +6,7 @@
 
 ## 접속 주소
 
-**https://GITHUB_USER.github.io/proto-calc/**
+**https://a01024436887-beep.github.io/proto-calc/**
 
 설치할 것 없이 휴대폰·데스크탑 브라우저에서 바로 열립니다. 홈 화면에 추가해 두면 편합니다.
 
