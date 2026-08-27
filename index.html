@@ -70,7 +70,7 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
 .minfo{font-size:12.5px;color:#5f5a4b;line-height:1.45;padding:1px 2px 7px}
 .row{display:grid;grid-template-columns:40px 1fr 1fr 1fr 38px;gap:8px;align-items:center}
 .no{
-  height:34px;display:flex;align-items:center;justify-content:center;
+  height:34px;display:flex;align-items:center;justify-content:center;gap:4px;
   font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--ink);
   background:#efe9d8;border-radius:8px;
 }
@@ -107,8 +107,9 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
 .csum b{font-family:'IBM Plex Mono',monospace}
 .csec-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-dim);margin:16px 0 9px}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{display:inline-flex;align-items:baseline;gap:4px;padding:8px 11px;border-radius:10px;background:#eee8d5}
+.chip{display:inline-flex;align-items:baseline;gap:5px;padding:8px 11px;border-radius:10px;background:#eee8d5}
 .chip .gn{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-dim)}
+.chip .tm{font-size:12.5px;color:var(--ink)}
 .chip .go{font-size:17px;font-weight:700;line-height:1}
 .chip.var{background:#f8ecc9;border:1px solid #e9d7a4}
 .crow{display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:1px solid #eee7d3}
@@ -116,6 +117,46 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
 .crow .chips{flex:1}
 .missing-line{font-size:13px;color:#a8843c;margin-top:12px}
 .buy-note{font-size:13.5px;color:var(--ink-dim);line-height:1.75;margin-top:16px}
+
+/* ── paper guide ── */
+.pstep{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #eee7d3}
+.pstep:last-child{border-bottom:0}
+.pnum{
+  flex:0 0 22px;height:22px;border-radius:50%;background:var(--ink);color:var(--paper);
+  font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.pbody{flex:1;font-size:14px;line-height:1.6;color:var(--ink)}
+.pbody .sub{display:block;font-size:12.5px;color:var(--ink-dim);margin-top:3px;line-height:1.6}
+.mklist{margin-top:11px}
+.slipmock{border:2px solid #d96a63;border-radius:8px;overflow:hidden;background:#fffdfa}
+.slipmock .sm-head{
+  display:grid;grid-template-columns:26px 1fr 96px;gap:0;
+  background:#f7ded9;border-bottom:1.5px solid #d96a63;
+}
+.slipmock .sm-head span{
+  font-size:10.5px;font-weight:700;color:#9e3f38;text-align:center;padding:5px 2px;letter-spacing:.02em;
+}
+.sm-row{display:grid;grid-template-columns:26px 1fr 96px;gap:0;border-bottom:1px solid #f0d9d5;align-items:stretch}
+.sm-row:last-child{border-bottom:0}
+.sm-no{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9e3f38;background:#fdf3f1;
+  display:flex;align-items:center;justify-content:center;border-right:1px solid #f0d9d5;
+}
+.sm-tm{
+  font-size:11.5px;color:var(--ink);padding:6px 7px;line-height:1.35;
+  border-right:1px solid #f0d9d5;display:flex;align-items:center;
+}
+.sm-tm .vs{color:#c0b9a2;margin:0 3px}
+.sm-tm .none{color:#c0b9a2}
+.sm-bx{display:flex;align-items:center;justify-content:center;gap:5px;padding:5px 4px}
+.bx{
+  width:23px;height:23px;border-radius:4px;border:1.3px solid #e0a9a3;background:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#e6c4c0;
+}
+.bx.fill{background:#2a2a28;border-color:#2a2a28;color:#fff}
+.sm-cap{font-size:11.5px;color:var(--ink-dim);margin-top:7px;line-height:1.6}
+.pwarn{font-size:13px;color:#b3402f;font-weight:500;margin-top:12px;line-height:1.6}
 .w-ink{color:var(--win)}
 .d-ink{color:var(--draw)}
 .l-ink{color:var(--lose)}
@@ -171,6 +212,11 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
     <div id="comboWrap"></div>
   </section>
 
+  <h2 class="sec-title">종이 마킹지에 적는 법</h2>
+  <section class="combo-card">
+    <div id="paperWrap"></div>
+  </section>
+
 </div>
 
 <footer class="board">
@@ -199,6 +245,10 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
   var noteEl   = document.getElementById('note');
   var unitEl   = document.getElementById('unit');
   var wrapEl   = document.getElementById('comboWrap');
+  var paperEl  = document.getElementById('paperWrap');
+  var roundNo  = '';
+  var gameInfo = [];
+  for (var q = 0; q < N; q++) gameInfo.push(null);
 
   /* build 14 rows */
   var html = '';
@@ -278,10 +328,14 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
     noteEl.textContent = msgs.join(' \u00b7 ');
 
     renderCombos(multi, unit);
+    renderPaper(multi, missing, total, unit, amount);
   }
 
   function chip(g, o, isVar){
-    return '<span class="chip' + (isVar ? ' var' : '') + '"><span class="gn">' + (g + 1) + '</span><span class="go ' + INK[o] + '">' + o + '</span></span>';
+    var gi = gameInfo[g];
+    var tm = gi ? '<span class="tm">' + gi.home + ':' + gi.away + '</span>' : '';
+    return '<span class="chip' + (isVar ? ' var' : '') + '"><span class="gn">' + (g + 1) + '</span>'
+         + tm + '<span class="go ' + INK[o] + '">' + o + '</span></span>';
   }
 
   function renderCombos(multi, unit){
@@ -328,6 +382,60 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
     wrapEl.innerHTML = h;
   }
 
+  function renderPaper(multi, missing, total, unit, amount){
+    var anyPicked = false;
+    for (var i = 0; i < N; i++) if (count(i) > 0) { anyPicked = true; break; }
+    if (!anyPicked) {
+      paperEl.innerHTML = '<p class="empty">위에서 경기를 고르면 마킹지에 어떻게 칠하면 되는지 여기에 그대로 나옵니다.</p>';
+      return;
+    }
+
+    var h = '';
+
+    h += '<div class="pstep"><span class="pnum">1</span><div class="pbody">'
+       + '마킹지 맨 위 <b>축구토토 승무패</b> 칸을 칠하고, 회차 번호를 적으세요.'
+       + '<span class="sub">' + (roundNo ? '이번 회차는 <b>제' + roundNo + '회차</b>입니다.' : '회차 번호는 화면 맨 위에 표시됩니다.') + '</span>'
+       + '</div></div>';
+
+    var mk = '<div class="slipmock"><div class="sm-head"><span>경기</span><span>홈 &nbsp;vs&nbsp; 원정</span><span>복 식</span></div>';
+    for (var g = 0; g < N; g++) {
+      var c = count(g), gi = gameInfo[g];
+      mk += '<div class="sm-row"><span class="sm-no">' + (g + 1) + '</span>';
+      mk += '<span class="sm-tm">' + (gi
+              ? gi.home + '<span class="vs">vs</span>' + gi.away
+              : '<span class="none">경기 정보 없음</span>') + '</span>';
+      mk += '<span class="sm-bx">';
+      for (var k = 0; k < 3; k++) {
+        var o = OUT[k];
+        mk += '<span class="bx' + (picks[g][o] ? ' fill' : '') + '">' + o + '</span>';
+      }
+      mk += '</span></div>';
+    }
+    mk += '</div><p class="sm-cap">까맣게 칠해진 칸이 마킹지에서 칠할 자리입니다. 단식 A~D 칸은 비워 두고 <b>복식</b> 칸만 칠하세요.</p>';
+
+    h += '<div class="pstep"><span class="pnum">2</span><div class="pbody">'
+       + '마킹지의 <b>복식</b> 칸을 아래 그림 그대로 칠하세요.'
+       + '<span class="sub">한 장이면 됩니다. 조합 수만큼 여러 장 쓰는 게 아니라, 모르는 경기에서 칸을 여러 개 칠하면 그 조합이 한 장에 전부 걸립니다.</span>'
+       + '<div class="mklist">' + mk + '</div>'
+       + '</div></div>';
+
+    h += '<div class="pstep"><span class="pnum">3</span><div class="pbody">'
+       + '금액란에 <b>' + fmt(amount) + '원</b>을 적으세요.'
+       + '<span class="sub">조합 ' + fmt(total) + '가지 × ' + fmt(unit) + '원 = ' + fmt(amount) + '원'
+       + (multi.length ? ' &middot; 여러 칸 칠한 경기 ' + multi.length + '개' : '') + '</span>'
+       + '</div></div>';
+
+    h += '<div class="pstep"><span class="pnum">4</span><div class="pbody">'
+       + '판매점에 마킹지를 내고 발행된 용지의 <b>회차·경기·금액</b>이 위와 같은지 확인하세요.'
+       + '<span class="sub">발행 후에는 취소가 안 되니 받자마자 보는 게 좋습니다.</span>'
+       + '</div></div>';
+
+    if (missing.length) h += '<p class="pwarn">아직 ' + missing.join(', ') + '경기를 안 골랐습니다. 14경기를 다 골라야 구매할 수 있어요.</p>';
+    if (amount > 96000) h += '<p class="pwarn">한 장 구매한도를 넘습니다. 복식은 조합이 2·3의 곱이라 96가지(96,000원)가 사실상 최대예요. 모름 체크를 줄이거나 애매한 경기를 두 칸으로만 좁혀 보세요.</p>';
+
+    paperEl.innerHTML = h;
+  }
+
   function loadGames(){
     fetch('data/games.json', {cache:'no-store'}).then(function(res){
       if (!res.ok) throw new Error('no data');
@@ -336,6 +444,7 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
       var label = '\ucd95\uad6c\ud1a0\ud1a0 \uc2b9\ubb34\ud328';
       if (d.round) label += ' \u00b7 \uc81c' + d.round + '\ud68c';
       if (d.deadline) label += ' \u00b7 \ub9c8\uac10 ' + d.deadline;
+      if (d.round) roundNo = String(d.round);
       document.getElementById('roundLabel').textContent = label;
       var gs = d.games || [];
       for (var k = 0; k < gs.length; k++) {
@@ -344,6 +453,7 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
         if (i < 0 || i >= N) continue;
         var el = document.getElementById('m' + i);
         if (!el) continue;
+        if (g.home || g.away) gameInfo[i] = { home: g.home || '?', away: g.away || '?' };
         var parts = [];
         if (g.league) parts.push(g.league);
         if (g.home || g.away) parts.push((g.home || '?') + ' vs ' + (g.away || '?'));
@@ -352,6 +462,7 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
         el.textContent = parts.join('  \u00b7  ');
         el.hidden = false;
       }
+      update();
     }).catch(function(){ /* games.json이 없으면 번호만 표시 */ });
   }
 
