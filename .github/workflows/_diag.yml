@@ -1,0 +1,27 @@
+name: 임시 연결 진단
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 러너 위치
+        run: curl -s --max-time 15 https://ipinfo.io/json || echo "ipinfo 실패"
+      - name: betman
+        run: |
+          for i in 1 2 3; do
+            echo "--- betman try $i ---"
+            curl -s -o /dev/null -w "http=%{http_code} time=%{time_total}\n" \
+              --max-time 20 -A "Mozilla/5.0" https://www.betman.co.kr/ || echo "curl exit=$?"
+          done
+      - name: wisetoto
+        run: |
+          for u in https://www.wisetoto.com/ https://www.wisetoto.com/proto/proto_gamelist.htm; do
+            echo "--- $u ---"
+            curl -s -o /dev/null -w "http=%{http_code} time=%{time_total}\n" \
+              --max-time 20 -A "Mozilla/5.0" "$u" || echo "curl exit=$?"
+          done
+      - name: sports.news 대조군
+        run: curl -s -o /dev/null -w "naver http=%{http_code}\n" --max-time 20 https://www.naver.com/ || echo "naver 실패"
