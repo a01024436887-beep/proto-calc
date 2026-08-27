@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -44,6 +45,11 @@ UA = (
 )
 TIMEOUT = 25
 
+# betman은 첫 TLS 핸드셰이크를 그냥 끊어 버리는 일이 잦다(연결 리셋).
+# 차단이 아니라 간헐적 리셋이라 몇 초 뒤 재시도하면 대개 붙는다.
+RETRIES = 4
+BACKOFF_SEC = 2.0
+
 
 def log(msg: str) -> None:
     print(msg, flush=True)
@@ -52,11 +58,29 @@ def log(msg: str) -> None:
 # ---------------------------------------------------------------- http
 
 
+def with_retry(fn, what: str):
+    """연결 리셋/타임아웃만 재시도. 순차 실행이라 동시 요청은 생기지 않는다."""
+    last_exc = None
+    for attempt in range(1, RETRIES + 1):
+        try:
+            return fn()
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            last_exc = exc
+            if attempt < RETRIES:
+                wait = BACKOFF_SEC * attempt
+                log(
+                    "  %s 연결 실패 (%d/%d) %s — %.0f초 후 재시도"
+                    % (what, attempt, RETRIES, type(exc).__name__, wait)
+                )
+                time.sleep(wait)
+    raise last_exc
+
+
 def make_session() -> requests.Session:
     s = requests.Session()
     s.headers.update({"User-Agent": UA, "Accept-Language": "ko-KR,ko;q=0.9"})
     # 세션 쿠키를 받아 둬야 내부 엔드포인트가 JSON을 돌려준다.
-    s.get(BASE + "/", timeout=TIMEOUT)
+    with_retry(lambda: s.get(BASE + "/", timeout=TIMEOUT), "메인 페이지")
     return s
 
 
@@ -71,7 +95,12 @@ def post_json(session: requests.Session, path: str, params: dict, referer: str) 
         "Origin": BASE,
         "Referer": referer,
     }
-    res = session.post(BASE + path, data=json.dumps(body), headers=headers, timeout=TIMEOUT)
+    res = with_retry(
+        lambda: session.post(
+            BASE + path, data=json.dumps(body), headers=headers, timeout=TIMEOUT
+        ),
+        path,
+    )
     res.raise_for_status()
     ctype = res.headers.get("content-type", "")
     if "json" not in ctype.lower():
