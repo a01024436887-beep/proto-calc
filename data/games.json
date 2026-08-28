@@ -1,105 +1,105 @@
 {
-  "round": "47",
-  "updated": "2026-08-27T18:56:08+09:00",
+  "round": "48",
+  "updated": "2026-08-28T14:50:41+09:00",
   "games": [
     {
       "no": 1,
-      "home": "AEK아테",
-      "away": "L소피아",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "8/27(목) 04:00"
+      "home": "본머스",
+      "away": "에버턴",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "8/29(토) 23:00"
     },
     {
       "no": 2,
-      "home": "비킹FK",
-      "away": "D자그레",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "8/27(목) 04:00"
+      "home": "코번트리",
+      "away": "헐시티",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "8/29(토) 23:00"
     },
     {
       "no": 3,
-      "home": "NK첼레",
-      "away": "슬로반브",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "8/27(목) 04:00"
+      "home": "토트넘",
+      "away": "뉴캐슬U",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "8/30(일) 01:30"
     },
     {
       "no": 4,
-      "home": "리옹",
-      "away": "페네르SK",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "8/27(목) 04:00"
+      "home": "피오렌티",
+      "away": "프로시노",
+      "league": "이탈리아 세리에A",
+      "kickoff": "8/30(일) 01:30"
     },
     {
       "no": 5,
-      "home": "이베리아",
-      "away": "야기엘로",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 01:00"
+      "home": "AC몬차",
+      "away": "우디네세",
+      "league": "이탈리아 세리에A",
+      "kickoff": "8/30(일) 01:30"
     },
     {
       "no": 6,
-      "home": "오모니아",
-      "away": "신트트라",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 02:00"
+      "home": "사수올로",
+      "away": "토리노",
+      "league": "이탈리아 세리에A",
+      "kickoff": "8/30(일) 01:30"
     },
     {
       "no": 7,
-      "home": "플젠",
-      "away": "츠르베나",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 02:00"
+      "home": "유벤투스",
+      "away": "파르마",
+      "league": "이탈리아 세리에A",
+      "kickoff": "8/30(일) 03:45"
     },
     {
       "no": 8,
-      "home": "릴레스트",
-      "away": "에그나티",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 02:00"
+      "home": "첼시",
+      "away": "브라이턴",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "8/30(일) 22:00"
     },
     {
       "no": 9,
-      "home": "잘츠부르",
-      "away": "미엘뷔",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 02:00"
+      "home": "리즈U",
+      "away": "브렌트퍼",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "8/30(일) 22:00"
     },
     {
       "no": 10,
-      "home": "카우노잘",
-      "away": "베식타시",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 02:00"
+      "home": "선덜랜드",
+      "away": "풀럼",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "8/30(일) 22:00"
     },
     {
       "no": 11,
-      "home": "FC툰",
-      "away": "L포즈난",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 03:00"
+      "home": "맨체스U",
+      "away": "입스위치",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "8/31(월) 00:30"
     },
     {
       "no": 12,
-      "home": "C소피아",
-      "away": "OFI크레",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 03:00"
+      "home": "나폴리",
+      "away": "코모1907",
+      "league": "이탈리아 세리에A",
+      "kickoff": "8/31(월) 01:30"
     },
     {
       "no": 13,
-      "home": "페렌츠바",
-      "away": "트라브존",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 03:30"
+      "home": "칼리아리",
+      "away": "인테르",
+      "league": "이탈리아 세리에A",
+      "kickoff": "8/31(월) 03:45"
     },
     {
       "no": 14,
-      "home": "안더레흐",
-      "away": "카이라트",
-      "league": "UEFA 유로파리그",
-      "kickoff": "8/28(금) 03:30"
+      "home": "라치오",
+      "away": "제노아",
+      "league": "이탈리아 세리에A",
+      "kickoff": "8/31(월) 03:45"
     }
   ],
-  "deadline": "8/26(수) 23:00"
+  "deadline": "8/29(토) 23:00"
 }
