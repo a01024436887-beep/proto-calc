@@ -2,13 +2,14 @@ name: 회차 자동 갱신
 
 on:
   schedule:
-    # UTC 기준. KST 07:00 / 19:00 하루 2회.
-    - cron: "0 22 * * *"
+    # UTC 기준. KST 09:00 / 19:00 하루 2회.
+    # 새 회차 발매가 통상 오전 8시경 시작이라 07시 실행은 헛돌아 09시로 옮겼다.
+    - cron: "0 0 * * *"
     - cron: "0 10 * * *"
   workflow_dispatch:
     inputs:
       seed_latest:
-        description: "판매중인 회차가 없으면 최근 마감 회차로 채우기"
+        description: "승무패: 판매중인 회차가 없으면 최근 마감 회차로 채우기"
         type: boolean
         default: false
 
@@ -32,18 +33,37 @@ jobs:
       - name: 의존성 설치
         run: pip install -r requirements.txt
 
-      - name: 회차 수집
+      # 두 수집은 서로 독립이다. 한쪽이 죽어도 다른 쪽 결과는 커밋되어야 하므로
+      # continue-on-error + 커밋 단계 if: always() 로 묶는다.
+      - name: 승무패 회차 수집
+        continue-on-error: true
         run: python scripts/fetch_games.py ${{ inputs.seed_latest && '--seed-latest' || '' }}
 
-      - name: 변경 시에만 커밋 & 푸시
+      - name: 승부식 배당 수집
+        continue-on-error: true
+        run: python scripts/fetch_proto.py
+
+      - name: 변경된 것만 커밋 & 푸시
+        if: always()
         run: |
-          if git diff --quiet -- data/games.json; then
+          changed=$(git diff --name-only -- data/)
+          if [ -z "$changed" ]; then
             echo "변경 없음 — 커밋 생략"
             exit 0
           fi
-          ROUND=$(python -c "import json;print(json.load(open('data/games.json',encoding='utf-8'))['round'])")
+          echo "변경된 파일:"; echo "$changed"
+
+          round() { python -c "import json,sys;print(json.load(open(sys.argv[1],encoding='utf-8')).get('round','?'))" "$1"; }
+          parts=""
+          case "$changed" in *data/games.json*) parts="승무패 제$(round data/games.json)회차";; esac
+          case "$changed" in *data/proto.json*)
+            p="승부식 제$(round data/proto.json)회차"
+            parts=${parts:+$parts · }$p
+            ;;
+          esac
+
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/games.json
-          git commit -m "data: 제${ROUND}회차 갱신"
+          git add data/
+          git commit -m "data: ${parts} 갱신"
           git push
