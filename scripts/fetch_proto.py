@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""프로토 승부식 축구 경기 배당 수집 → data/proto.json 갱신.
+"""프로토 승부식 축구 배당 수집 → data/proto.json 갱신.
 
-프로토 승부식은 gmId=G101 / gameTypeCode=PPTPVE (inqScheduleSltList.do로 확인).
+프로토 승부식은 gmId=G101. 경기 목록은 gameInfoInq.do의 `compSchedules`에
+{"keys": [컬럼명...], "datas": [[값...], ...]} 열 지향 테이블로 들어 있다.
 
-승무패(G011)와 달리 경기 목록이 `schedulesList`가 아니라 `compSchedules`에 들어 있고,
-{"keys": [컬럼명...], "datas": [[값...], ...]} 형태의 열 지향 테이블이다.
+담는 것: 축구(itemCode=SC)의 **일반 승무패**와 **핸디캡**(정수/소수).
+빼는 것: 언더오버, SUM(홀짝), 전반전, 축구 외 종목, 마감 지난 경기, 발매 차단 경기,
+        배당 미정(protoStatus=1 → 배당이 전부 0.0).
 
-담는 것: 축구(itemCode=SC) × 일반 승무패 유형(betTypNm='승무패')만.
-빼는 것: 핸디캡('일반 정수/소수핸디캡'), 언더오버, SUM(홀짝), 전반 승무패,
-        축구 외 종목, 마감 지난 경기, 발매 차단 경기.
-같은 경기의 일반/핸디캡/언더오버는 규정상 교차 조합이 안 되므로 섞으면 계산이 틀려진다.
+베트맨은 같은 실제 경기의 일반과 핸디캡에 **다른 경기번호**를 준다. 규정상 둘을 교차
+조합할 수 없으므로 각각 별도 원소로 담고 `match_key`를 같은 값으로 넣어 묶는다
+(프런트가 이 키로 그룹을 만들어 한쪽을 고르면 나머지를 잠근다).
+한 경기에 핸디캡 항목이 둘 이상 붙는 경우도 있다(기준값이 다름).
 
-경기번호(`no`)는 베트맨 화면에 그대로 표시되는 `matchSeq`를 쓴다.
-(gameSlipProtoVictory.html.js가 '<span class="db">' + v.matchSeq + '</span>'로 렌더한다.
- 승무패 G011에서도 matchSeq가 1~14로 화면 번호와 일치했다.)
+핸디캡 기준값은 `winHandi`(홈 기준). `handi`는 값이 아니라 유형 코드이니 쓰지 않는다.
+기준값이 .5 단위면 무승부가 없어 `drawAllot`이 0.0이고, 그때 "무" 키는 빠진다.
 
 실패해도 절대 기존 data/proto.json을 덮어쓰지 않고 exit 0으로 끝낸다.
 """
@@ -44,7 +45,16 @@ GM_ID = "G101"
 GAME_TYPE_CODE = "PPTPVE"
 
 SOCCER = "SC"
-BET_TYPE_GENERAL = "승무패"  # 일반 승무패. 핸디캡/언더오버/홀짝은 다른 값이 붙는다.
+
+# betTypNm 기준 분류. 언더오버('일반 언더오버')와 SUM('일반 홀짝')은 어디에도 없어 자동 제외.
+TYPE_GENERAL = "일반"
+TYPE_HANDICAP = "핸디캡"
+BET_TYPE_TO_KIND = {
+    "승무패": TYPE_GENERAL,
+    "일반 정수핸디캡": TYPE_HANDICAP,
+    "일반 소수핸디캡": TYPE_HANDICAP,
+}
+TYPE_ORDER = {TYPE_GENERAL: 0, TYPE_HANDICAP: 1}
 
 OUT_PATH = ROOT / "data" / "proto.json"
 
@@ -95,15 +105,13 @@ def schedule_rows(detail: dict) -> list[dict]:
     raise ValueError("경기 목록(compSchedules/schedulesList)을 찾을 수 없음")
 
 
-def is_target(row: dict) -> bool:
-    """축구 + 일반 승무패 유형만. 전반전·핸디캡·언더오버·홀짝은 제외."""
+def kind_of(row: dict) -> str | None:
+    """축구 일반/핸디캡이면 유형 문자열, 아니면 None."""
     if row.get("itemCode") != SOCCER:
-        return False
-    if clean(row.get("betTypNm")) != BET_TYPE_GENERAL:
-        return False
+        return None
     if "전반" in clean(row.get("betNm")):
-        return False
-    return True
+        return None
+    return BET_TYPE_TO_KIND.get(clean(row.get("betTypNm")))
 
 
 def is_open(row: dict, now_ms: int) -> bool:
@@ -122,13 +130,41 @@ def is_open(row: dict, now_ms: int) -> bool:
 
 
 def odds_of(row: dict) -> dict:
-    """배당은 원본 소수점 그대로. 0이거나 없으면 키를 넣지 않는다."""
+    """배당은 원본 소수점 그대로. 0이거나 없으면 키를 넣지 않는다.
+
+    소수핸디캡(.5)은 무승부가 없어 drawAllot이 0.0 → "무"가 자동으로 빠진다.
+    """
     out = {}
     for key, field in (("승", "winAllot"), ("무", "drawAllot"), ("패", "loseAllot")):
         value = row.get(field)
         if isinstance(value, (int, float)) and value > 0:
             out[key] = float(value)
     return out
+
+
+def match_key_of(row: dict) -> str:
+    """같은 실제 경기를 묶는 키. 홈/원정 팀 ID + 경기 날짜(KST).
+
+    같은 경기의 일반·핸디캡 행은 homeId/awayId/gameDate가 모두 같다(확인됨).
+    킥오프 시각이 조정돼도 같은 경기의 행들은 함께 움직이므로 그룹이 깨지지 않는다.
+    """
+    game_date = row.get("gameDate")
+    day = (
+        datetime.fromtimestamp(game_date / 1000, tz=KST).strftime("%Y%m%d")
+        if isinstance(game_date, int)
+        else "00000000"
+    )
+    return "M%s-%s-%s" % (day, clean(row.get("homeId")), clean(row.get("awayId")))
+
+
+def handicap_of(row: dict, kind: str) -> float | None:
+    """핸디캡 기준값(홈 기준). 일반 유형이면 None."""
+    if kind != TYPE_HANDICAP:
+        return None
+    value = row.get("winHandi")
+    if isinstance(value, (int, float)):
+        return float(value)
+    return None
 
 
 def build_payload(session: requests.Session, entry: dict) -> dict:
@@ -149,15 +185,15 @@ def build_payload(session: requests.Session, entry: dict) -> dict:
     now = datetime.now(tz=KST)
     now_ms = int(now.timestamp() * 1000)
 
-    targets = [r for r in rows if is_target(r)]
-    open_rows = [r for r in targets if is_open(r, now_ms)]
+    targets = [(r, k) for r in rows for k in [kind_of(r)] if k]
+    open_rows = [(r, k) for r, k in targets if is_open(r, now_ms)]
 
-    games = []
+    sortable = []
     no_odds = 0
-    for row in open_rows:
+    for row, kind in open_rows:
         odds = odds_of(row)
         if not odds:
-            # 배당 미정(protoStatus=1) 경기. 담아 봐야 고를 수 없으므로 뺀다.
+            # 배당 미정(protoStatus=1). 담아 봐야 고를 수 없으므로 뺀다.
             no_odds += 1
             continue
 
@@ -166,23 +202,47 @@ def build_payload(session: requests.Session, entry: dict) -> dict:
         if not home or not away:
             continue
 
-        game = {"no": int(row["matchSeq"]), "home": home, "away": away, "odds": odds}
-        league = clean(row.get("leagueName"))
+        key = match_key_of(row)
+        game = {
+            "no": int(row["matchSeq"]),
+            "match_key": key,
+            "type": kind,
+            "handicap": handicap_of(row, kind),
+            "home": home,
+            "away": away,
+            "odds": odds,
+        }
+        league = clean(row.get("leagueShortName")) or clean(row.get("leagueName"))
         if league:
             game["league"] = league
         kickoff = row.get("gameDate")
         if isinstance(kickoff, int):
             game["kickoff"] = fmt_kst(kickoff)
-        # 정렬용 원본 시각. 아래에서 다시 뺀다.
-        games.append((kickoff if isinstance(kickoff, int) else 0, game))
 
-    # kickoff 빠른 순 → 같은 시각이면 경기번호 순.
-    games.sort(key=lambda pair: (pair[0], pair[1]["no"]))
-    games = [game for _, game in games]
+        # kickoff 빠른 순 → 같은 경기끼리 붙여서 → 일반 먼저 → 경기번호 순
+        sortable.append(
+            ((kickoff if isinstance(kickoff, int) else 0), key, TYPE_ORDER[kind], game["no"], game)
+        )
 
+    sortable.sort(key=lambda t: t[:4])
+    games = [t[4] for t in sortable]
+
+    match_count = len({g["match_key"] for g in games})
+    kinds = {}
+    for g in games:
+        kinds[g["type"]] = kinds.get(g["type"], 0) + 1
     log(
-        "축구 일반 승무패 %d경기 중 발매중 %d경기 → 배당 있는 %d경기 담음 (배당 미정 %d경기 제외)"
-        % (len(targets), len(open_rows), len(games), no_odds)
+        "축구 일반+핸디캡 %d항목 중 발매중 %d항목 → 배당 있는 %d항목 담음 "
+        "(일반 %d, 핸디캡 %d / 실제 %d경기, 배당 미정 %d항목 제외)"
+        % (
+            len(targets),
+            len(open_rows),
+            len(games),
+            kinds.get(TYPE_GENERAL, 0),
+            kinds.get(TYPE_HANDICAP, 0),
+            match_count,
+            no_odds,
+        )
     )
 
     payload = {
@@ -204,13 +264,20 @@ def validate(payload: dict) -> None:
     if not games:
         raise ValueError("담긴 경기가 0개")
 
-    with_odds = [g for g in games if g.get("odds")]
-    if not with_odds:
+    if not any(g.get("odds") for g in games):
         raise ValueError("배당이 있는 경기가 하나도 없음")
 
     numbers = [g["no"] for g in games]
     if len(set(numbers)) != len(numbers):
         raise ValueError("경기번호가 중복됨")
+
+    for g in games:
+        if g["type"] not in (TYPE_GENERAL, TYPE_HANDICAP):
+            raise ValueError("%s번 항목의 type이 이상함: %r" % (g["no"], g["type"]))
+        if g["type"] == TYPE_GENERAL and g["handicap"] is not None:
+            raise ValueError("%s번 일반 항목에 핸디캡 값이 붙어 있음" % g["no"])
+        if not g.get("match_key"):
+            raise ValueError("%s번 항목에 match_key가 없음" % g["no"])
 
     if not payload.get("round"):
         raise ValueError("회차 번호가 비어 있음")
@@ -229,7 +296,7 @@ def main() -> int:
 
         payload = build_payload(session, entry)
         log(
-            "수집: 제%s회차 / %d경기 / 마감 %s"
+            "수집: 제%s회차 / %d항목 / 마감 %s"
             % (payload["round"], len(payload["games"]), payload.get("deadline", "?"))
         )
         validate(payload)
