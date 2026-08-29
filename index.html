@@ -8,134 +8,127 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
 :root{
-  --pitch:#0d2a1c;
-  --chalk:rgba(247,244,236,.88);
-  --chalk-dim:rgba(247,244,236,.55);
-  --line:rgba(247,244,236,.16);
-  --paper:#f7f3e8;
-  --paper-edge:#ddd4bd;
-  --cell:#fffdf6;
-  --ink:#26251f;
-  --ink-dim:#8a8471;
-  --win:#c22f27;
-  --draw:#3a3d45;
-  --lose:#1d4fd7;
-  --gold:#f2c76c;
-  --warn:#f0a94e;
-  --radius:14px;
+  --pitch:#0d2a1c; --chalk:rgba(247,244,236,.88); --chalk-dim:rgba(247,244,236,.55);
+  --line:rgba(247,244,236,.16); --paper:#f7f3e8; --paper-edge:#ddd4bd; --cell:#fffdf6;
+  --ink:#26251f; --ink-dim:#8a8471; --win:#c22f27; --draw:#3a3d45; --lose:#1d4fd7;
+  --gold:#f2c76c; --warn:#f0a94e; --radius:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html{-webkit-text-size-adjust:100%}
 button{font:inherit;cursor:pointer}
 body{
   font-family:'IBM Plex Sans KR','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
   background:repeating-linear-gradient(0deg, transparent 0 92px, rgba(255,255,255,.03) 92px 184px), var(--pitch);
-  color:var(--chalk);
-  min-height:100vh;
-  padding:22px 14px 132px;
+  color:var(--chalk); min-height:100vh; padding:0 14px 132px;
 }
 .wrap{max-width:560px;margin:0 auto}
 
-/* ── header ── */
-.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--chalk-dim);margin-bottom:6px}
-h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
-.hint{font-size:13px;line-height:1.65;color:var(--chalk-dim);margin-top:8px}
-.hint b{color:var(--gold);font-weight:700}
-.jump{display:flex;gap:8px;margin-top:14px}
-.jump a{
-  flex:1;text-align:center;padding:9px 6px;border-radius:10px;border:1px solid var(--line);
-  color:var(--chalk-dim);text-decoration:none;font-size:12.5px;
+/* ── header + tabs ── */
+header{padding:20px 0 0}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--chalk-dim);margin-bottom:5px}
+h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.tabs{
+  position:sticky;top:0;z-index:9;display:flex;gap:6px;margin:14px -14px 0;padding:10px 14px;
+  background:rgba(13,42,28,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
 }
-.jump a:active{background:rgba(255,255,255,.08)}
+.tab{
+  flex:1;padding:11px 6px;border-radius:11px;border:1px solid var(--line);
+  background:transparent;color:var(--chalk-dim);font-size:13.5px;font-weight:500;
+}
+.tab[aria-selected="true"]{background:var(--paper);border-color:var(--paper);color:var(--ink);font-weight:700}
+.pane{padding-top:16px}
+.pane[hidden]{display:none}
+.hint{font-size:12.5px;line-height:1.6;color:var(--chalk-dim);margin-bottom:12px}
+.hint b{color:var(--gold);font-weight:700}
 
-/* ── section divider ── */
-.divider{margin:40px 0 0;padding-top:24px;border-top:1px solid var(--line)}
-.divider h2{font-size:21px;font-weight:700;letter-spacing:-.01em}
-
-.tools{display:flex;justify-content:space-between;align-items:center;margin:16px 0 12px;gap:10px;flex-wrap:wrap}
+/* ── toolbar ── */
+.tools{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap}
 .unit-ctl{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--chalk-dim)}
 .unit-ctl input{
-  width:92px;padding:7px 9px;border-radius:9px;border:1px solid var(--line);
+  width:88px;padding:7px 9px;border-radius:9px;border:1px solid var(--line);
   background:rgba(255,255,255,.06);color:var(--chalk);
   font-family:'IBM Plex Mono',monospace;font-size:14px;text-align:right;
 }
 .unit-ctl input:focus-visible{outline:2px solid var(--chalk);outline-offset:1px}
-.ghost{
-  padding:8px 12px;border-radius:9px;border:1px solid var(--line);
-  background:transparent;color:var(--chalk-dim);font-size:12.5px;
-}
+.ghost{padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--chalk-dim);font-size:12.5px}
 .ghost:active{background:rgba(255,255,255,.08)}
+.ghost[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#3a2c07;font-weight:600}
 
-/* ── paper cards ── */
-.slip,.combo-card{
-  background:var(--paper);border-radius:var(--radius);
-  box-shadow:0 10px 28px rgba(0,0,0,.4);color:var(--ink);
+/* ── cards & panels ── */
+.card{background:var(--paper);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,.35);color:var(--ink);padding:12px}
+.card + .panel, .panel + .panel{margin-top:12px}
+.panel{background:var(--paper);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,.35);color:var(--ink);overflow:hidden}
+.panel > summary{
+  list-style:none;cursor:pointer;padding:13px 14px;display:flex;align-items:center;gap:9px;
 }
-.slip{padding:12px 12px 14px}
-.combo-card{padding:14px 12px}
+.panel > summary::-webkit-details-marker{display:none}
+.panel > summary::after{
+  content:'';margin-left:auto;width:8px;height:8px;flex:none;
+  border-right:2px solid var(--ink-dim);border-bottom:2px solid var(--ink-dim);
+  transform:rotate(45deg) translate(-2px,-2px);transition:transform .15s;
+}
+.panel[open] > summary::after{transform:rotate(225deg) translate(-2px,-2px)}
+.panel > summary h2{font-size:14.5px;font-weight:700}
+.psum{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-dim)}
+.pbodywrap{padding:0 12px 14px;border-top:1px solid #eee7d3;padding-top:12px}
 .slip-label{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;
-  color:var(--ink-dim);padding:2px 2px 9px;margin-bottom:10px;
-  border-bottom:2px dashed var(--paper-edge);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--ink-dim);
+  padding:0 2px 9px;margin-bottom:8px;border-bottom:2px dashed var(--paper-edge);
   display:flex;justify-content:space-between;
 }
-.sec-title{font-size:15px;font-weight:700;margin:26px 2px 10px}
-.empty,.cap{font-size:13.5px;color:var(--ink-dim);line-height:1.7}
+.empty,.cap{font-size:13px;color:var(--ink-dim);line-height:1.7}
 .cap{margin-top:12px}
-.w-ink{color:var(--win)}
-.d-ink{color:var(--draw)}
-.l-ink{color:var(--lose)}
-.pwarn{font-size:13px;color:#b3402f;font-weight:500;margin-top:12px;line-height:1.6}
+.w-ink{color:var(--win)} .d-ink{color:var(--draw)} .l-ink{color:var(--lose)}
+.pwarn{font-size:12.5px;color:#b3402f;font-weight:500;margin-top:11px;line-height:1.6}
 
-/* ── 승무패: marking card ── */
+/* ── 승무패 marking card ── */
+.cols{display:grid;grid-template-columns:40px 1fr 1fr 1fr 38px;gap:8px;padding-bottom:4px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-dim);text-align:center}
 .game{padding:7px 0}
 .game + .game{border-top:1px solid #eee7d3}
-.minfo{font-size:12.5px;color:#5f5a4b;line-height:1.45;padding:1px 2px 7px}
+.minfo{font-size:12px;color:#5f5a4b;line-height:1.45;padding:1px 2px 6px}
 .row{display:grid;grid-template-columns:40px 1fr 1fr 1fr 38px;gap:8px;align-items:center}
 .no{
-  height:34px;display:flex;align-items:center;justify-content:center;gap:4px;
+  height:34px;display:flex;align-items:center;justify-content:center;
   font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--ink);
   background:#efe9d8;border-radius:8px;
 }
 .mark{
   height:46px;border-radius:10px;border:1.5px solid #cfc7ae;background:var(--cell);
-  color:var(--ink-dim);font-size:16px;font-weight:700;
-  transition:background .12s,color .12s,border-color .12s;
+  color:var(--ink-dim);font-size:16px;font-weight:700;transition:background .12s,color .12s,border-color .12s;
 }
 .mark:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
 .mark.on{color:#fff}
 .mark.w.on{background:var(--win);border-color:var(--win)}
 .mark.d.on{background:var(--draw);border-color:var(--draw)}
 .mark.l.on{background:var(--lose);border-color:var(--lose)}
-.cols{display:grid;grid-template-columns:40px 1fr 1fr 1fr 38px;gap:8px;padding-bottom:4px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-dim);text-align:center}
 .chk{
   width:30px;height:30px;margin:0 auto;display:flex;align-items:center;justify-content:center;
   border-radius:8px;border:1.5px solid #cfc7ae;background:var(--cell);
-  color:var(--ink-dim);font-size:15px;font-weight:700;
-  transition:background .12s,color .12s,border-color .12s;
+  color:var(--ink-dim);font-size:15px;font-weight:700;transition:background .12s,color .12s,border-color .12s;
 }
 .chk::before{content:'?'}
 .chk.on{background:#b9861f;border-color:#b9861f;color:#fff}
 .chk.on::before{content:'\2713'}
 .chk:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.chk[disabled]{opacity:.35;cursor:default}
 
-/* ── 승무패: combinations ── */
-.csum{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px}
+/* ── 승무패 combinations ── */
+.csum{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .csum b{font-family:'IBM Plex Mono',monospace}
-.csec-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-dim);margin:16px 0 9px}
-.chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{display:inline-flex;align-items:baseline;gap:5px;padding:8px 11px;border-radius:10px;background:#eee8d5}
-.chip .gn{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-dim)}
-.chip .tm{font-size:12.5px;color:var(--ink)}
-.chip .go{font-size:17px;font-weight:700;line-height:1}
+.csec-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-dim);margin:14px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:baseline;gap:5px;padding:7px 10px;border-radius:10px;background:#eee8d5}
+.chip .gn{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-dim)}
+.chip .tm{font-size:12px;color:var(--ink)}
+.chip .go{font-size:16px;font-weight:700;line-height:1}
 .chip.var{background:#f8ecc9;border:1px solid #e9d7a4}
-.crow{display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:1px solid #eee7d3}
-.cri{flex:0 0 28px;padding-top:9px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-dim);text-align:right}
+.crow{display:flex;align-items:flex-start;gap:8px;padding:9px 0;border-bottom:1px solid #eee7d3}
+.cri{flex:0 0 26px;padding-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-dim);text-align:right}
 .crow .chips{flex:1}
-.missing-line{font-size:13px;color:#a8843c;margin-top:12px}
-.buy-note{font-size:13.5px;color:var(--ink-dim);line-height:1.75;margin-top:16px}
+.missing-line{font-size:12.5px;color:#a8843c;margin-top:11px}
+.buy-note{font-size:12.5px;color:var(--ink-dim);line-height:1.7;margin-top:14px}
 
-/* ── 승무패: paper guide ── */
+/* ── paper guide ── */
 .pstep{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #eee7d3}
 .pstep:last-child{border-bottom:0}
 .pnum{
@@ -143,61 +136,59 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
   font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
   display:flex;align-items:center;justify-content:center;margin-top:1px;
 }
-.pbody{flex:1;font-size:14px;line-height:1.6;color:var(--ink)}
-.pbody .sub{display:block;font-size:12.5px;color:var(--ink-dim);margin-top:3px;line-height:1.6}
-.mklist{margin-top:11px}
+.pbody{flex:1;font-size:13.5px;line-height:1.6;color:var(--ink)}
+.pbody .sub{display:block;font-size:12px;color:var(--ink-dim);margin-top:3px;line-height:1.6}
+.mklist{margin-top:10px}
 .slipmock{border:2px solid #d96a63;border-radius:8px;overflow:hidden;background:#fffdfa}
-.slipmock .sm-head{
-  display:grid;grid-template-columns:26px 1fr 96px;gap:0;
-  background:#f7ded9;border-bottom:1.5px solid #d96a63;
-}
-.slipmock .sm-head span{
-  font-size:10.5px;font-weight:700;color:#9e3f38;text-align:center;padding:5px 2px;letter-spacing:.02em;
-}
-.sm-row{display:grid;grid-template-columns:26px 1fr 96px;gap:0;border-bottom:1px solid #f0d9d5;align-items:stretch}
+.slipmock .sm-head{display:grid;grid-template-columns:26px 1fr 96px;background:#f7ded9;border-bottom:1.5px solid #d96a63}
+.slipmock .sm-head span{font-size:10.5px;font-weight:700;color:#9e3f38;text-align:center;padding:5px 2px}
+.sm-row{display:grid;grid-template-columns:26px 1fr 96px;border-bottom:1px solid #f0d9d5;align-items:stretch}
 .sm-row:last-child{border-bottom:0}
-.sm-no{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9e3f38;background:#fdf3f1;
-  display:flex;align-items:center;justify-content:center;border-right:1px solid #f0d9d5;
-}
-.sm-tm{
-  font-size:11.5px;color:var(--ink);padding:6px 7px;line-height:1.35;
-  border-right:1px solid #f0d9d5;display:flex;align-items:center;
-}
+.sm-no{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9e3f38;background:#fdf3f1;display:flex;align-items:center;justify-content:center;border-right:1px solid #f0d9d5}
+.sm-tm{font-size:11.5px;color:var(--ink);padding:6px 7px;line-height:1.35;border-right:1px solid #f0d9d5;display:flex;align-items:center}
 .sm-tm .vs{color:#c0b9a2;margin:0 3px}
 .sm-tm .none{color:#c0b9a2}
 .sm-bx{display:flex;align-items:center;justify-content:center;gap:5px;padding:5px 4px}
-.bx{
-  width:23px;height:23px;border-radius:4px;border:1.3px solid #e0a9a3;background:#fff;
-  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#e6c4c0;
-}
+.bx{width:23px;height:23px;border-radius:4px;border:1.3px solid #e0a9a3;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#e6c4c0}
 .bx.fill{background:#2a2a28;border-color:#2a2a28;color:#fff}
 .sm-cap{font-size:11.5px;color:var(--ink-dim);margin-top:7px;line-height:1.6}
 
-/* ── 승부식: match list ── */
-.pz-mt{padding:11px 0}
-.pz-mt + .pz-mt{border-top:1px solid #eee7d3}
-.pz-top{display:flex;align-items:baseline;gap:7px;margin-bottom:8px;flex-wrap:wrap}
-.pz-no{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#fff;background:#8a8471;border-radius:6px;padding:2px 6px}
-.pz-lg{font-size:11.5px;color:var(--ink-dim)}
-.pz-kt{font-size:11.5px;color:var(--ink-dim)}
-.pz-tm{font-size:14px;font-weight:700;flex:1 1 100%}
-.pz-item{margin-top:7px}
+/* ── 승부식 match list ── */
+.day{border-top:1px solid #eee7d3;margin-top:4px}
+.day:first-child{border-top:0;margin-top:0}
+.day > summary{
+  list-style:none;cursor:pointer;padding:10px 2px;display:flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:700;color:var(--ink);
+}
+.day > summary::-webkit-details-marker{display:none}
+.day > summary::after{
+  content:'';margin-left:auto;width:7px;height:7px;flex:none;
+  border-right:2px solid var(--ink-dim);border-bottom:2px solid var(--ink-dim);
+  transform:rotate(45deg) translate(-2px,-2px);transition:transform .15s;
+}
+.day[open] > summary::after{transform:rotate(225deg) translate(-2px,-2px)}
+.daycount{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--ink-dim)}
+.daypick{font-size:11px;font-weight:600;color:#b9861f}
+.pz-mt{padding:9px 0}
+.pz-mt + .pz-mt{border-top:1px solid #f2ece0}
+.pz-top{display:flex;align-items:baseline;gap:7px;margin-bottom:7px;flex-wrap:wrap}
+.pz-lg{font-size:11px;color:var(--ink-dim)}
+.pz-kt{font-size:11px;color:var(--ink-dim)}
+.pz-tm{font-size:13.5px;font-weight:700;flex:1 1 100%}
+.pz-item{margin-top:6px}
 .pz-item.off{opacity:.32}
 .pz-ihd{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
-.pz-tag{
-  font-size:10.5px;font-weight:700;letter-spacing:.02em;padding:2px 6px;border-radius:5px;
-  background:#e3ddc8;color:#6d6754;
-}
+.pz-no{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#8a8471;border-radius:5px;padding:2px 5px}
+.pz-tag{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;background:#e3ddc8;color:#6d6754}
 .pz-tag.hd{background:#dfe6f2;color:#3a5183}
-.pz-hint{font-size:11px;color:var(--ink-dim)}
+.pz-hint{font-size:10.5px;color:var(--ink-dim)}
 .pz-row{display:grid;grid-template-columns:1fr 1fr 1fr 38px;gap:7px;align-items:center}
 .pz-od{
-  height:52px;border-radius:10px;border:1.5px solid #cfc7ae;background:var(--cell);
+  height:50px;border-radius:10px;border:1.5px solid #cfc7ae;background:var(--cell);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
   color:var(--ink-dim);transition:background .12s,color .12s,border-color .12s;
 }
-.pz-od .o{font-size:14px;font-weight:700}
+.pz-od .o{font-size:13.5px;font-weight:700}
 .pz-od .r{font-family:'IBM Plex Mono',monospace;font-size:12px}
 .pz-od:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
 .pz-od.on{color:#fff}
@@ -206,34 +197,32 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
 .pz-od.l.on{background:var(--lose);border-color:var(--lose)}
 .pz-od[disabled]{opacity:.35;cursor:default}
 
-/* ── 승부식: combinations ── */
-.pz-csum{font-size:14px;font-weight:500;color:var(--ink);line-height:1.9}
+/* ── 승부식 combinations ── */
+.pz-csum{font-size:13.5px;font-weight:500;color:var(--ink);line-height:1.85}
 .pz-csum b{font-family:'IBM Plex Mono',monospace;font-weight:700}
-.pz-crow{display:flex;align-items:flex-start;gap:8px;padding:10px 0;border-bottom:1px solid #eee7d3}
+.pz-crow{display:flex;align-items:flex-start;gap:8px;padding:9px 0;border-bottom:1px solid #eee7d3}
 .pz-crow:last-child{border-bottom:0}
-.pz-cri{flex:0 0 26px;padding-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim);text-align:right}
+.pz-cri{flex:0 0 24px;padding-top:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim);text-align:right}
 .pz-cbody{flex:1}
-.pz-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pz-chips{display:flex;flex-wrap:wrap;gap:5px}
 .pz-chip{display:inline-flex;align-items:baseline;gap:4px;padding:6px 9px;border-radius:9px;background:#eee8d5}
 .pz-chip.var{background:#f8ecc9;border:1px solid #e9d7a4}
-.pz-chip .gn{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim)}
-.pz-chip .tm{font-size:12px;color:var(--ink)}
-.pz-chip .hd{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#3a5183}
-.pz-chip .go{font-size:14px;font-weight:700}
-.pz-chip .gr{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim)}
-.pz-cpay{margin-top:5px;font-size:12.5px;color:var(--ink-dim)}
+.pz-chip .gn{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-dim)}
+.pz-chip .tm{font-size:11.5px;color:var(--ink)}
+.pz-chip .hd{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#3a5183}
+.pz-chip .go{font-size:13.5px;font-weight:700}
+.pz-chip .gr{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-dim)}
+.pz-cpay{margin-top:5px;font-size:12px;color:var(--ink-dim)}
 .pz-cpay b{font-family:'IBM Plex Mono',monospace;color:var(--ink)}
-.pz-note{font-size:12.5px;color:var(--ink-dim);line-height:1.75;margin-top:12px;padding-top:10px;border-top:2px dashed var(--paper-edge)}
+.pz-note{font-size:12px;color:var(--ink-dim);line-height:1.7;margin-top:12px;padding-top:10px;border-top:2px dashed var(--paper-edge)}
 
 /* ── scoreboard ── */
 .board{
   position:fixed;left:0;right:0;bottom:0;z-index:10;
-  background:rgba(8,20,13,.94);backdrop-filter:blur(8px);
-  border-top:1px solid var(--line);
+  background:rgba(8,20,13,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);
   padding:10px 16px calc(12px + env(safe-area-inset-bottom));
 }
 .board-in{max-width:560px;margin:0 auto}
-.board-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--chalk-dim);margin-bottom:3px}
 .board-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .cell{display:flex;align-items:baseline;gap:6px}
 .lbl{font-size:12px;color:var(--chalk-dim)}
@@ -244,79 +233,75 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
 .note:empty{display:none}
 [hidden]{display:none !important}
 
-@media (prefers-reduced-motion: reduce){
-  *{transition:none !important}
-  html{scroll-behavior:auto}
-}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- ════ 승무패 14경기 ════ -->
-  <header id="sw">
-    <p class="eyebrow" id="roundLabel">축구토토 승무패 · 14경기</p>
+  <header>
+    <p class="eyebrow">축구토토</p>
     <h1>조합 계산기</h1>
-    <p class="hint">아는 경기는 승·무·패 중 하나를 골라 거세요. 모르는 경기는 오른쪽 <b>모름</b>을 한 번 체크하면 그 경기의 승·무·패 세 가지가 전부 조합에 들어갑니다. 두 가지로만 좁히고 싶으면 버튼을 직접 2개 누르면 돼요.</p>
-    <nav class="jump">
-      <a href="#sw">승무패 14경기</a>
-      <a href="#pz">축구 전경기 승부식</a>
-    </nav>
   </header>
 
-  <div class="tools">
-    <label class="unit-ctl">단가
-      <input id="unit" type="number" inputmode="numeric" value="1000" min="0" step="100"> 원
-    </label>
-    <button id="reset" class="ghost">전체 지우기</button>
+  <div class="tabs" role="tablist">
+    <button class="tab" id="tabSW" role="tab" aria-selected="true" aria-controls="paneSW">승무패 14경기</button>
+    <button class="tab" id="tabPZ" role="tab" aria-selected="false" aria-controls="panePZ">승부식 전경기</button>
   </div>
 
-  <section class="slip" aria-label="경기별 승·무·패 선택">
-    <div class="slip-label"><span>MARK CARD</span><span>모름 = 승·무·패 전부</span></div>
-    <div class="cols" aria-hidden="true"><span>경기</span><span></span><span></span><span></span><span>모름</span></div>
-    <div id="rows"></div>
+  <!-- ══ 승무패 ══ -->
+  <section class="pane" id="paneSW" role="tabpanel" aria-labelledby="tabSW">
+    <p class="hint" id="roundLabel">회차 정보를 불러오는 중…</p>
+    <p class="hint">아는 경기는 승·무·패 중 하나, 모르는 경기는 오른쪽 <b>모름</b>을 체크하세요.</p>
+
+    <div class="tools">
+      <label class="unit-ctl">단가 <input id="unit" type="number" inputmode="numeric" value="1000" min="0" step="100"> 원</label>
+      <button id="reset" class="ghost">전체 지우기</button>
+    </div>
+
+    <div class="card">
+      <div class="slip-label"><span>MARK CARD</span><span>모름 = 승·무·패 전부</span></div>
+      <div class="cols" aria-hidden="true"><span>경기</span><span></span><span></span><span></span><span>모름</span></div>
+      <div id="rows"></div>
+    </div>
+
+    <details class="panel" id="panelCombo">
+      <summary><h2>경우의 수</h2><span class="psum" id="comboSum">—</span></summary>
+      <div class="pbodywrap"><div id="comboWrap"></div></div>
+    </details>
+
+    <details class="panel" id="panelPaper" open>
+      <summary><h2>종이 마킹지에 적는 법</h2><span class="psum" id="paperSum">—</span></summary>
+      <div class="pbodywrap"><div id="paperWrap"></div></div>
+    </details>
   </section>
 
-  <h2 class="sec-title">경우의 수</h2>
-  <section class="combo-card">
-    <div id="comboWrap"></div>
-  </section>
+  <!-- ══ 승부식 ══ -->
+  <section class="pane" id="panePZ" role="tabpanel" aria-labelledby="tabPZ" hidden>
+    <p class="hint" id="pzRound">회차 정보를 불러오는 중…</p>
+    <p class="hint">버튼에 <b>배당</b>이 같이 적혀 있어요. 같은 경기의 일반과 핸디캡은 함께 걸 수 없어서 한쪽을 고르면 나머지가 잠깁니다.</p>
 
-  <h2 class="sec-title">종이 마킹지에 적는 법</h2>
-  <section class="combo-card">
-    <div id="paperWrap"></div>
-  </section>
+    <div class="tools">
+      <label class="unit-ctl">조합당 <input id="pzUnit" type="number" inputmode="numeric" value="1000" min="100" step="100"> 원</label>
+      <button id="pzOnly" class="ghost" aria-pressed="false">고른 것만</button>
+      <button id="pzReset" class="ghost">전체 지우기</button>
+    </div>
 
-  <!-- ════ 프로토 승부식 (축구 전경기) ════ -->
-  <div class="divider" id="pz">
-    <p class="eyebrow" id="pzRound">프로토 승부식 · 축구</p>
-    <h2>축구 전경기 배당 계산기</h2>
-    <p class="hint">발매중인 축구 경기가 전부 나옵니다. 승·무·패 버튼에 <b>배당</b>이 같이 적혀 있고, 핸디캡이 있는 경기는 아래에 따로 줄이 붙어요. 애매한 경기는 <b>모름</b>을 체크하면 세 결과가 조합에 들어가고, 조합마다 배당과 적중 시 환급금이 따로 계산됩니다. 같은 경기의 일반과 핸디캡은 규정상 함께 걸 수 없어서, 한쪽을 고르면 나머지는 자동으로 잠깁니다.</p>
-  </div>
+    <div class="card">
+      <div class="slip-label"><span>MATCH LIST</span><span>승 · 무 · 패 배당</span></div>
+      <div id="pzRows"><p class="empty">경기 정보를 불러오는 중…</p></div>
+    </div>
 
-  <div class="tools">
-    <label class="unit-ctl">조합당
-      <input id="pzUnit" type="number" inputmode="numeric" value="1000" min="100" step="100"> 원
-    </label>
-    <button id="pzReset" class="ghost">전체 지우기</button>
-  </div>
-
-  <section class="slip" aria-label="승부식 경기 목록">
-    <div class="slip-label"><span>MATCH LIST</span><span>승 · 무 · 패 배당</span></div>
-    <div id="pzRows"><p class="empty">경기 정보를 불러오는 중…</p></div>
-  </section>
-
-  <h2 class="sec-title">조합과 예상 환급금</h2>
-  <section class="combo-card">
-    <div id="pzCombo"></div>
+    <details class="panel" id="panelPz">
+      <summary><h2>조합과 예상 환급금</h2><span class="psum" id="pzSum">—</span></summary>
+      <div class="pbodywrap"><div id="pzCombo"></div></div>
+    </details>
   </section>
 
 </div>
 
 <footer class="board">
   <div class="board-in">
-    <p class="board-tag" id="boardTag">승무패 14경기</p>
-
     <div id="boardSW">
       <div class="board-row">
         <div class="cell"><span class="lbl">조합</span><b id="combos" class="num">1</b><span class="suffix">가지</span></div>
@@ -324,7 +309,6 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
       </div>
       <p id="note" class="note"></p>
     </div>
-
     <div id="boardPZ" hidden>
       <div class="board-row">
         <div class="cell"><span class="lbl">경기</span><b id="pzPicked" class="num">0</b><span class="suffix">개</span></div>
@@ -343,30 +327,36 @@ var INK = {'승':'w-ink','무':'d-ink','패':'l-ink'};
 function fmtN(n){ return n.toLocaleString('ko-KR'); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-var boardTag = document.getElementById('boardTag');
-var boardSW  = document.getElementById('boardSW');
-var boardPZ  = document.getElementById('boardPZ');
-function showBoard(which){
-  var pz = which === 'pz';
-  boardSW.hidden = pz; boardPZ.hidden = !pz;
-  boardTag.textContent = pz ? '축구 전경기 승부식' : '승무패 14경기';
-}
+/* ── tabs ── */
+(function(){
+  var tSW = document.getElementById('tabSW'), tPZ = document.getElementById('tabPZ');
+  var pSW = document.getElementById('paneSW'), pPZ = document.getElementById('panePZ');
+  var bSW = document.getElementById('boardSW'), bPZ = document.getElementById('boardPZ');
+  function go(pz){
+    tSW.setAttribute('aria-selected', pz ? 'false' : 'true');
+    tPZ.setAttribute('aria-selected', pz ? 'true' : 'false');
+    pSW.hidden = pz; pPZ.hidden = !pz;
+    bSW.hidden = pz; bPZ.hidden = !pz;
+    window.scrollTo(0, 0);
+  }
+  tSW.addEventListener('click', function(){ go(false); });
+  tPZ.addEventListener('click', function(){ go(true); });
+})();
 
 /* ══════════ 승무패 14경기 ══════════ */
 (function(){
-  var N = 14, CAP = 500, LIMIT = 100000;
+  var N = 14, CAP = 500;
   var picks = [];
   for (var i = 0; i < N; i++) picks.push({});
 
-  var rowsEl   = document.getElementById('rows');
-  var combosEl = document.getElementById('combos');
-  var amountEl = document.getElementById('amount');
-  var noteEl   = document.getElementById('note');
-  var unitEl   = document.getElementById('unit');
-  var wrapEl   = document.getElementById('comboWrap');
-  var paperEl  = document.getElementById('paperWrap');
-  var roundNo  = '';
-  var gameInfo = [];
+  var rowsEl = document.getElementById('rows');
+  var unitEl = document.getElementById('unit');
+  var noteEl = document.getElementById('note');
+  var wrapEl = document.getElementById('comboWrap');
+  var paperEl = document.getElementById('paperWrap');
+  var comboSum = document.getElementById('comboSum');
+  var paperSum = document.getElementById('paperSum');
+  var roundNo = '', gameInfo = [];
   for (var q = 0; q < N; q++) gameInfo.push(null);
 
   var html = '';
@@ -379,12 +369,11 @@ function showBoard(which){
             + '" aria-pressed="false" aria-label="' + (g + 1) + '경기 ' + o + '">' + o + '</button>';
     }
     html += '<button type="button" class="chk" data-i="' + g + '" aria-pressed="false" aria-label="'
-          + (g + 1) + '경기 모름, 승무패 전부 선택"></button></div></div>';
+          + (g + 1) + '경기 모름"></button></div></div>';
   }
   rowsEl.innerHTML = html;
 
   rowsEl.addEventListener('click', function(e){
-    showBoard('sw');
     var chk = e.target.closest('.chk');
     if (chk) { var ci = +chk.dataset.i; setGame(ci, count(ci) === 3 ? [] : OUT); update(); return; }
     var b = e.target.closest('.mark');
@@ -406,12 +395,9 @@ function showBoard(which){
     }
   }
 
-  unitEl.addEventListener('input', function(){ showBoard('sw'); update(); });
+  unitEl.addEventListener('input', update);
   document.getElementById('reset').addEventListener('click', function(){
-    showBoard('sw');
-    for (var i = 0; i < N; i++) picks[i] = {};
-    var marks = rowsEl.querySelectorAll('.mark.on');
-    for (var j = 0; j < marks.length; j++) { marks[j].classList.remove('on'); marks[j].setAttribute('aria-pressed','false'); }
+    for (var i = 0; i < N; i++) setGame(i, []);
     update();
   });
 
@@ -429,8 +415,10 @@ function showBoard(which){
       if (chkBtn) { chkBtn.classList.toggle('on', c === 3); chkBtn.setAttribute('aria-pressed', c === 3 ? 'true' : 'false'); }
     }
     var amount = total * unit;
-    combosEl.textContent = fmtN(total);
-    amountEl.textContent = fmtN(amount);
+    document.getElementById('combos').textContent = fmtN(total);
+    document.getElementById('amount').textContent = fmtN(amount);
+    comboSum.textContent = missing.length === N ? '—' : fmtN(total) + '가지 · ' + fmtN(amount) + '원';
+    paperSum.textContent = missing.length ? '미선택 ' + missing.length + '경기' : '14경기 완료';
 
     var msgs = [];
     if (missing.length === N) msgs.push('경기를 선택해 주세요');
@@ -451,12 +439,10 @@ function showBoard(which){
   }
 
   function renderCombos(multi, unit){
-    var anyPicked = false;
-    for (var i = 0; i < N; i++) if (count(i) > 0) { anyPicked = true; break; }
-    if (!anyPicked) {
-      wrapEl.innerHTML = '<p class="empty">경기를 선택하면 여기에 고정픽과 조합별로 어떻게 걸면 되는지가 큼직하게 나옵니다.</p>';
-      return;
-    }
+    var any = false;
+    for (var i = 0; i < N; i++) if (count(i) > 0) { any = true; break; }
+    if (!any) { wrapEl.innerHTML = '<p class="empty">경기를 선택하면 고정픽과 조합이 여기에 나옵니다.</p>'; return; }
+
     var lists = [], varTotal = 1, missing = [];
     for (var j = 0; j < multi.length; j++) { lists.push(list(multi[j])); varTotal *= lists[j].length; }
 
@@ -484,8 +470,8 @@ function showBoard(which){
         var p = multi.length - 1;
         while (p >= 0) { idx[p]++; if (idx[p] < lists[p].length) break; idx[p] = 0; p--; }
       }
-      if (varTotal > CAP) h += '<p class="cap">조합이 많아 전체 ' + fmtN(varTotal) + '가지 중 앞 ' + fmtN(CAP) + '가지만 표시했어요. 조합 수와 총액은 전체 기준입니다.</p>';
-      h += '<p class="buy-note">읽는 법: 고정픽 그대로 + 조합 줄 하나 = 베팅 한 장입니다. 실제 구매는 마킹지나 베트맨에서 위 마킹카드처럼 복수 체크해 한 장으로 사면 전체 조합이 같이 걸립니다.</p>';
+      if (varTotal > CAP) h += '<p class="cap">전체 ' + fmtN(varTotal) + '가지 중 앞 ' + fmtN(CAP) + '가지만 표시했어요. 조합 수와 총액은 전체 기준입니다.</p>';
+      h += '<p class="buy-note">고정픽 + 조합 줄 하나 = 베팅 한 장입니다. 실제로는 마킹지에 복수 체크해 한 장으로 사면 전체 조합이 같이 걸립니다.</p>';
     } else {
       h += '<p class="buy-note">모름 체크한 경기가 없어서 위 고정픽 한 장이 전부입니다.</p>';
     }
@@ -493,26 +479,20 @@ function showBoard(which){
   }
 
   function renderPaper(multi, missing, total, unit, amount){
-    var anyPicked = false;
-    for (var i = 0; i < N; i++) if (count(i) > 0) { anyPicked = true; break; }
-    if (!anyPicked) {
-      paperEl.innerHTML = '<p class="empty">위에서 경기를 고르면 마킹지에 어떻게 칠하면 되는지 여기에 그대로 나옵니다.</p>';
-      return;
-    }
-    var h = '';
-    h += '<div class="pstep"><span class="pnum">1</span><div class="pbody">'
-       + '마킹지 맨 위 <b>축구토토 승무패</b> 칸을 칠하고, 회차 번호를 적으세요.'
-       + '<span class="sub">' + (roundNo ? '이번 회차는 <b>제' + esc(roundNo) + '회차</b>입니다.' : '회차 번호는 화면 맨 위에 표시됩니다.') + '</span>'
-       + '</div></div>';
+    var any = false;
+    for (var i = 0; i < N; i++) if (count(i) > 0) { any = true; break; }
+    if (!any) { paperEl.innerHTML = '<p class="empty">위에서 경기를 고르면 마킹지에 어떻게 칠하면 되는지 그대로 나옵니다.</p>'; return; }
+
+    var h = '<div class="pstep"><span class="pnum">1</span><div class="pbody">'
+       + '마킹지 맨 위 <b>축구토토 승무패</b> 칸을 칠하고 회차 번호를 적으세요.'
+       + '<span class="sub">' + (roundNo ? '이번 회차는 <b>제' + esc(roundNo) + '회차</b>입니다.' : '회차 번호는 화면 위쪽에 표시됩니다.') + '</span></div></div>';
 
     var mk = '<div class="slipmock"><div class="sm-head"><span>경기</span><span>홈 &nbsp;vs&nbsp; 원정</span><span>복 식</span></div>';
     for (var g = 0; g < N; g++) {
       var gi = gameInfo[g];
       mk += '<div class="sm-row"><span class="sm-no">' + (g + 1) + '</span>';
-      mk += '<span class="sm-tm">' + (gi
-              ? esc(gi.home) + '<span class="vs">vs</span>' + esc(gi.away)
-              : '<span class="none">경기 정보 없음</span>') + '</span>';
-      mk += '<span class="sm-bx">';
+      mk += '<span class="sm-tm">' + (gi ? esc(gi.home) + '<span class="vs">vs</span>' + esc(gi.away)
+              : '<span class="none">경기 정보 없음</span>') + '</span><span class="sm-bx">';
       for (var k = 0; k < 3; k++) {
         var o = OUT[k];
         mk += '<span class="bx' + (picks[g][o] ? ' fill' : '') + '">' + o + '</span>';
@@ -523,20 +503,18 @@ function showBoard(which){
 
     h += '<div class="pstep"><span class="pnum">2</span><div class="pbody">'
        + '마킹지의 <b>복식</b> 칸을 아래 그림 그대로 칠하세요.'
-       + '<span class="sub">한 장이면 됩니다. 조합 수만큼 여러 장 쓰는 게 아니라, 모르는 경기에서 칸을 여러 개 칠하면 그 조합이 한 장에 전부 걸립니다.</span>'
+       + '<span class="sub">한 장이면 됩니다. 모르는 경기에서 칸을 여러 개 칠하면 그 조합이 한 장에 전부 걸립니다.</span>'
        + '<div class="mklist">' + mk + '</div></div></div>';
 
-    h += '<div class="pstep"><span class="pnum">3</span><div class="pbody">'
-       + '금액란에 <b>' + fmtN(amount) + '원</b>을 적으세요.'
-       + '<span class="sub">조합 ' + fmtN(total) + '가지 × ' + fmtN(unit) + '원 = ' + fmtN(amount) + '원'
+    h += '<div class="pstep"><span class="pnum">3</span><div class="pbody">금액란에 <b>' + fmtN(amount) + '원</b>을 적으세요.'
+       + '<span class="sub">조합 ' + fmtN(total) + '가지 × ' + fmtN(unit) + '원'
        + (multi.length ? ' &middot; 여러 칸 칠한 경기 ' + multi.length + '개' : '') + '</span></div></div>';
 
-    h += '<div class="pstep"><span class="pnum">4</span><div class="pbody">'
-       + '판매점에 마킹지를 내고 발행된 용지의 <b>회차·경기·금액</b>이 위와 같은지 확인하세요.'
+    h += '<div class="pstep"><span class="pnum">4</span><div class="pbody">발행된 용지의 <b>회차·경기·금액</b>이 위와 같은지 확인하세요.'
        + '<span class="sub">발행 후에는 취소가 안 되니 받자마자 보는 게 좋습니다.</span></div></div>';
 
     if (missing.length) h += '<p class="pwarn">아직 ' + missing.join(', ') + '경기를 안 골랐습니다. 14경기를 다 골라야 구매할 수 있어요.</p>';
-    if (amount > 96000) h += '<p class="pwarn">한 장 구매한도를 넘습니다. 복식은 조합이 2·3의 곱이라 96가지(96,000원)가 사실상 최대예요. 모름 체크를 줄이거나 애매한 경기를 두 칸으로만 좁혀 보세요.</p>';
+    if (amount > 96000) h += '<p class="pwarn">한 장 한도를 넘습니다. 복식 조합은 2·3의 곱이라 96가지(96,000원)가 사실상 최대예요.</p>';
     paperEl.innerHTML = h;
   }
 
@@ -545,44 +523,48 @@ function showBoard(which){
     return res.json();
   }).then(function(d){
     var label = '축구토토 승무패';
-    if (d.round) { roundNo = String(d.round); label += ' \u00b7 제' + d.round + '회'; }
-    if (d.deadline) label += ' \u00b7 마감 ' + d.deadline;
+    if (d.round) { roundNo = String(d.round); label += ' · 제' + d.round + '회'; }
+    if (d.deadline) label += ' · 마감 ' + d.deadline;
     document.getElementById('roundLabel').textContent = label;
     var gs = d.games || [];
     for (var k = 0; k < gs.length; k++) {
-      var g = gs[k];
-      var i = (g.no ? g.no : k + 1) - 1;
+      var g = gs[k], i = (g.no ? g.no : k + 1) - 1;
       if (i < 0 || i >= N) continue;
+      if (g.home || g.away) gameInfo[i] = { home: g.home || '?', away: g.away || '?' };
       var el = document.getElementById('m' + i);
       if (!el) continue;
-      if (g.home || g.away) gameInfo[i] = { home: g.home || '?', away: g.away || '?' };
       var parts = [];
       if (g.league) parts.push(g.league);
       if (g.home || g.away) parts.push((g.home || '?') + ' vs ' + (g.away || '?'));
       if (g.kickoff) parts.push(g.kickoff);
       if (!parts.length) continue;
-      el.textContent = parts.join('  \u00b7  ');
+      el.textContent = parts.join('  ·  ');
       el.hidden = false;
     }
     update();
-  }).catch(function(){ /* games.json이 없으면 번호만 표시 */ });
+  }).catch(function(){
+    document.getElementById('roundLabel').textContent = '축구토토 승무패 · 14경기';
+  });
 
   update();
 })();
 
-/* ══════════ 프로토 승부식 (축구 전경기) ══════════ */
+/* ══════════ 승부식 ══════════ */
 (function(){
   var CAP = 300, LIMIT = 100000, MIN_G = 2, MAX_G = 10;
-  var games = [], picks = [], groups = [], updatedAt = '';
+  var games = [], picks = [], groups = [], days = [], updatedAt = '', onlyPicked = false;
 
   var rowsEl = document.getElementById('pzRows');
   var wrapEl = document.getElementById('pzCombo');
   var unitEl = document.getElementById('pzUnit');
   var noteEl = document.getElementById('pzNote');
+  var pzSum  = document.getElementById('pzSum');
+  var onlyBtn = document.getElementById('pzOnly');
 
   function od(n){ return (Math.round(n * 100) / 100).toFixed(2); }
   function count(i){ var c = 0; for (var o in picks[i]) c++; return c; }
   function list(i){ var a = []; for (var k = 0; k < 3; k++) if (picks[i][OUT[k]]) a.push(OUT[k]); return a; }
+  function groupPicked(members){ for (var m = 0; m < members.length; m++) if (count(members[m]) > 0) return true; return false; }
 
   function hdLabel(g){
     if (g.type !== '핸디캡') return null;
@@ -590,41 +572,76 @@ function showBoard(which){
     var v = Number(g.handicap);
     return '핸디캡 ' + (v > 0 ? '+' : '') + v.toFixed(1);
   }
+  function dayOf(g){
+    var s = g.kickoff || '';
+    var m = s.match(/^([^)]*\))/);
+    if (m) return m[1];
+    m = s.match(/^(\S+)/);
+    return m ? m[1] : '일정 미정';
+  }
 
   function build(){
     if (!games.length) { rowsEl.innerHTML = '<p class="empty">지금 발매중인 축구 경기가 없습니다. 새 회차가 열리면 자동으로 채워집니다.</p>'; return; }
-    var h = '';
-    for (var gi = 0; gi < groups.length; gi++) {
-      var members = groups[gi], first = games[members[0]];
-      h += '<div class="pz-mt"><div class="pz-top">'
-         + (first.league ? '<span class="pz-lg">' + esc(first.league) + '</span>' : '')
-         + (first.kickoff ? '<span class="pz-kt">' + esc(first.kickoff) + '</span>' : '')
-         + '<span class="pz-tm">' + esc(first.home || '?') + ' vs ' + esc(first.away || '?') + '</span>'
-         + '</div>';
-      for (var m = 0; m < members.length; m++) {
-        var i = members[m], g = games[i], hd = hdLabel(g);
-        h += '<div class="pz-item" data-item="' + i + '"><div class="pz-ihd">'
-           + '<span class="pz-no">' + esc(g.no != null ? g.no : (i + 1)) + '</span>'
-           + '<span class="pz-tag' + (hd ? ' hd' : '') + '">' + esc(hd || '일반') + '</span>'
-           + (members.length > 1 && m === 0 ? '<span class="pz-hint">같은 경기끼리는 조합 불가</span>' : '')
-           + '</div><div class="pz-row">';
-        for (var k = 0; k < 3; k++) {
-          var o = OUT[k], r = g.odds ? g.odds[o] : null;
-          var dis = (r == null || !(r > 0)) ? ' disabled' : '';
-          h += '<button type="button" class="pz-od ' + CLS[o] + '" data-i="' + i + '" data-o="' + o + '"'
-             + dis + ' aria-pressed="false"><span class="o">' + o + '</span>'
-             + '<span class="r">' + (r != null && r > 0 ? od(r) : '—') + '</span></button>';
-        }
-        h += '<button type="button" class="chk" data-i="' + i + '" aria-pressed="false" aria-label="모름"></button>';
-        h += '</div></div>';
+    var h = '', anyShown = false;
+    for (var di = 0; di < days.length; di++) {
+      var day = days[di], shown = [];
+      for (var gi = 0; gi < day.groups.length; gi++) {
+        var members = day.groups[gi];
+        if (!onlyPicked) { shown.push(members); continue; }
+        var picked = [];
+        for (var m = 0; m < members.length; m++) if (count(members[m]) > 0) picked.push(members[m]);
+        if (picked.length) shown.push(picked);
       }
-      h += '</div>';
+      if (!shown.length) continue;
+      anyShown = true;
+      h += '<details class="day" data-day="' + di + '" open><summary>' + esc(day.label)
+         + '<span class="daycount">' + shown.length + '경기</span>'
+         + '<span class="daypick" data-daypick="' + di + '"></span></summary>';
+      for (gi = 0; gi < shown.length; gi++) h += matchHtml(shown[gi]);
+      h += '</details>';
     }
+    if (!anyShown) h = '<p class="empty">고른 경기가 없습니다. "고른 것만"을 다시 눌러 전체를 보세요.</p>';
     rowsEl.innerHTML = h;
     lockGroups();
+    paintDayBadges();
   }
 
-  // 같은 경기의 일반/핸디캡은 교차 조합 불가 — 한쪽을 고르면 나머지를 잠근다
+  function paintDayBadges(){
+    for (var di = 0; di < days.length; di++) {
+      var el = rowsEl.querySelector('[data-daypick="' + di + '"]');
+      if (!el) continue;
+      var n = 0, gs = days[di].groups;
+      for (var gi = 0; gi < gs.length; gi++) if (groupPicked(gs[gi])) n++;
+      el.textContent = n ? '고름 ' + n : '';
+    }
+  }
+
+  function matchHtml(members){
+    var first = games[members[0]];
+    var h = '<div class="pz-mt"><div class="pz-top">'
+          + (first.league ? '<span class="pz-lg">' + esc(first.league) + '</span>' : '')
+          + (first.kickoff ? '<span class="pz-kt">' + esc(first.kickoff) + '</span>' : '')
+          + '<span class="pz-tm">' + esc(first.home || '?') + ' vs ' + esc(first.away || '?') + '</span></div>';
+    for (var m = 0; m < members.length; m++) {
+      var i = members[m], g = games[i], hd = hdLabel(g);
+      h += '<div class="pz-item" data-item="' + i + '"><div class="pz-ihd">'
+         + '<span class="pz-no">' + esc(g.no != null ? g.no : (i + 1)) + '</span>'
+         + '<span class="pz-tag' + (hd ? ' hd' : '') + '">' + esc(hd || '일반') + '</span>'
+         + (members.length > 1 && m === 0 ? '<span class="pz-hint">같은 경기끼리 조합 불가</span>' : '')
+         + '</div><div class="pz-row">';
+      for (var k = 0; k < 3; k++) {
+        var o = OUT[k], r = g.odds ? g.odds[o] : null;
+        var dis = (r == null || !(r > 0)) ? ' disabled' : '';
+        h += '<button type="button" class="pz-od ' + CLS[o] + '" data-i="' + i + '" data-o="' + o + '"' + dis
+           + ' aria-pressed="false"><span class="o">' + o + '</span>'
+           + '<span class="r">' + (r != null && r > 0 ? od(r) : '—') + '</span></button>';
+      }
+      h += '<button type="button" class="chk" data-i="' + i + '" aria-pressed="false" aria-label="모름"></button>';
+      h += '</div></div>';
+    }
+    return h + '</div>';
+  }
+
   function lockGroups(){
     for (var gi = 0; gi < groups.length; gi++) {
       var members = groups[gi], active = -1;
@@ -645,7 +662,6 @@ function showBoard(which){
   }
 
   rowsEl.addEventListener('click', function(e){
-    showBoard('pz');
     var chk = e.target.closest('.chk');
     if (chk) {
       if (chk.disabled) return;
@@ -677,11 +693,18 @@ function showBoard(which){
     if (c) { var n = count(i) >= 2; c.classList.toggle('on', n); c.setAttribute('aria-pressed', n ? 'true' : 'false'); }
   }
 
-  unitEl.addEventListener('input', function(){ showBoard('pz'); update(); });
+  unitEl.addEventListener('input', update);
+  onlyBtn.addEventListener('click', function(){
+    onlyPicked = !onlyPicked;
+    onlyBtn.setAttribute('aria-pressed', onlyPicked ? 'true' : 'false');
+    build();
+    for (var i = 0; i < games.length; i++) if (count(i) > 0) syncRow(i);
+    lockGroups();
+  });
   document.getElementById('pzReset').addEventListener('click', function(){
-    showBoard('pz');
-    for (var i = 0; i < picks.length; i++) setGame(i, []);
-    lockGroups(); update();
+    for (var i = 0; i < picks.length; i++) picks[i] = {};
+    onlyPicked = false; onlyBtn.setAttribute('aria-pressed','false');
+    build(); update();
   });
 
   function update(){
@@ -694,12 +717,15 @@ function showBoard(which){
     document.getElementById('pzPicked').textContent = fmtN(sel.length);
     document.getElementById('pzCombos').textContent = fmtN(total);
     document.getElementById('pzAmount').textContent = fmtN(amount);
+    pzSum.textContent = sel.length ? fmtN(total) + '가지 · ' + fmtN(amount) + '원' : '—';
 
     var msgs = [];
     if (sel.length && sel.length < MIN_G) msgs.push('조합 구매는 2경기부터');
     if (sel.length > MAX_G) msgs.push('최대 10경기 (' + sel.length + '개 선택됨)');
     if (amount > LIMIT) msgs.push('회차당 구매한도 10만원 초과');
     noteEl.textContent = msgs.join(' \u00b7 ');
+
+    paintDayBadges();
 
     renderCombos(sel, total, unit, amount);
   }
@@ -715,10 +741,8 @@ function showBoard(which){
   }
 
   function renderCombos(sel, total, unit, amount){
-    if (!sel.length) {
-      wrapEl.innerHTML = '<p class="empty">경기를 고르면 조합마다 배당과 적중 시 예상 환급금이 나옵니다.</p>';
-      return;
-    }
+    if (!sel.length) { wrapEl.innerHTML = '<p class="empty">경기를 고르면 조합마다 배당과 적중 시 예상 환급금이 나옵니다.</p>'; return; }
+
     var lists = [];
     for (var j = 0; j < sel.length; j++) lists.push(list(sel[j]));
 
@@ -729,12 +753,12 @@ function showBoard(which){
       lo *= mn; hi *= mx;
     }
 
-    var h = '<p class="pz-csum">' + sel.length + '경기 선택 · 조합 <b>' + fmtN(total) + '</b>가지<br>'
+    var h = '<p class="pz-csum">' + sel.length + '경기 · 조합 <b>' + fmtN(total) + '</b>가지<br>'
           + '배당 <b>' + od(lo) + '</b>배' + (Math.abs(hi - lo) > 0.005 ? ' ~ <b>' + od(hi) + '</b>배' : '') + '<br>'
-          + '총 ' + fmtN(total) + ' × ' + fmtN(unit) + '원 = <b>' + fmtN(amount) + '</b>원</p>';
+          + fmtN(total) + ' × ' + fmtN(unit) + '원 = <b>' + fmtN(amount) + '</b>원</p>';
 
     if (sel.length < MIN_G) h += '<p class="pwarn">프로토 조합 구매는 2경기 이상부터 가능합니다.</p>';
-    if (sel.length > MAX_G) h += '<p class="pwarn">한 장에 최대 10경기까지만 조합됩니다. ' + (sel.length - MAX_G) + '경기를 빼주세요.</p>';
+    if (sel.length > MAX_G) h += '<p class="pwarn">한 장에 최대 10경기까지입니다. ' + (sel.length - MAX_G) + '경기를 빼주세요.</p>';
     if (amount > LIMIT)     h += '<p class="pwarn">회차당 1인 구매한도 10만원을 넘습니다.</p>';
 
     var idx = [], r2 = 0, shown = Math.min(total, CAP);
@@ -747,23 +771,20 @@ function showBoard(which){
         row += chip(sel[j], o, lists[j].length > 1);
         mult *= games[sel[j]].odds[o];
       }
-      var pay = Math.floor(mult * unit);
       h += '<div class="pz-crow"><span class="pz-cri">' + r2 + '</span><div class="pz-cbody">'
          + '<div class="pz-chips">' + row + '</div>'
-         + '<p class="pz-cpay">배당 <b>' + od(mult) + '</b>배 · 적중 시 <b>' + fmtN(pay) + '</b>원'
-         + (mult > 100 ? ' <span style="color:#b3402f">· 100배 초과</span>' : '') + '</p>'
-         + '</div></div>';
+         + '<p class="pz-cpay">배당 <b>' + od(mult) + '</b>배 · 적중 시 <b>' + fmtN(Math.floor(mult * unit)) + '</b>원'
+         + (mult > 100 ? ' <span style="color:#b3402f">· 100배 초과</span>' : '') + '</p></div></div>';
       if (r2 >= shown) break;
       var p = sel.length - 1;
       while (p >= 0) { idx[p]++; if (idx[p] < lists[p].length) break; idx[p] = 0; p--; }
     }
-    if (total > CAP) h += '<p class="cap">조합이 많아 전체 ' + fmtN(total) + '가지 중 앞 ' + fmtN(CAP) + '가지만 표시했어요. 조합 수·총액·배당 범위는 전체 기준입니다.</p>';
+    if (total > CAP) h += '<p class="cap">전체 ' + fmtN(total) + '가지 중 앞 ' + fmtN(CAP) + '가지만 표시했어요. 조합 수·총액·배당 범위는 전체 기준입니다.</p>';
 
     h += '<p class="pz-note">한 줄이 투표권 한 장입니다. 예상 환급금은 세금 전 금액이에요. '
        + '적중 배당률이 100배를 넘으면서 당첨금이 10만원을 넘거나, 당첨금이 200만원을 넘으면 22%가 원천징수됩니다. '
-       + '배당은 발매 중에도 바뀌고 구매 시점 배당으로 확정되니, 사기 전에 베트맨에서 한 번 더 확인하세요.'
+       + '배당은 발매 중에도 바뀌고 구매 시점 배당으로 확정되니 사기 전에 베트맨에서 다시 확인하세요.'
        + (updatedAt ? ' (배당 기준 ' + esc(updatedAt) + ')' : '') + '</p>';
-
     wrapEl.innerHTML = h;
   }
 
@@ -775,22 +796,29 @@ function showBoard(which){
       return g && g.odds && (g.odds['승'] > 0 || g.odds['무'] > 0 || g.odds['패'] > 0);
     });
     picks = games.map(function(){ return {}; });
-    // 같은 실제 경기끼리 묶기 (match_key 없으면 팀명+킥오프로 대체)
-    var seen = {};
-    groups = [];
+
+    var seen = {}, dseen = {};
+    groups = []; days = [];
     for (var i = 0; i < games.length; i++) {
       var key = games[i].match_key != null ? String(games[i].match_key)
               : (games[i].home || '') + '|' + (games[i].away || '') + '|' + (games[i].kickoff || '');
       if (seen[key] === undefined) { seen[key] = groups.length; groups.push([]); }
       groups[seen[key]].push(i);
     }
+    for (var gi = 0; gi < groups.length; gi++) {
+      var lbl = dayOf(games[groups[gi][0]]);
+      if (dseen[lbl] === undefined) { dseen[lbl] = days.length; days.push({label: lbl, groups: []}); }
+      days[dseen[lbl]].groups.push(groups[gi]);
+    }
+
     updatedAt = d.updated_label || '';
     var label = '프로토 승부식 · 축구';
-    if (d.round) label += ' \u00b7 제' + d.round + '회차';
-    if (d.deadline) label += ' \u00b7 마감 ' + d.deadline;
+    if (d.round) label += ' · 제' + d.round + '회차';
+    if (d.deadline) label += ' · 마감 ' + d.deadline;
     document.getElementById('pzRound').textContent = label;
     build(); update();
   }).catch(function(){
+    document.getElementById('pzRound').textContent = '프로토 승부식 · 축구';
     rowsEl.innerHTML = '<p class="empty">경기 정보를 아직 못 불러왔습니다. 새 회차가 열리면 자동으로 채워집니다.</p>';
     update();
   });
