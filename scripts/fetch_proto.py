@@ -5,17 +5,24 @@
 프로토 승부식은 gmId=G101. 경기 목록은 gameInfoInq.do의 `compSchedules`에
 {"keys": [컬럼명...], "datas": [[값...], ...]} 열 지향 테이블로 들어 있다.
 
-담는 것: 축구(itemCode=SC)의 **일반 승무패**와 **핸디캡**(정수/소수).
-빼는 것: 언더오버, SUM(홀짝), 전반전, 축구 외 종목, 마감 지난 경기, 발매 차단 경기,
+담는 것: 축구(itemCode=SC)의 **일반 승무패**, **핸디캡**(정수/소수), **언더오버**.
+빼는 것: SUM(홀짝), 전반전, 축구 외 종목, 마감 지난 경기, 발매 차단 경기,
         배당 미정(protoStatus=1 → 배당이 전부 0.0).
 
-베트맨은 같은 실제 경기의 일반과 핸디캡에 **다른 경기번호**를 준다. 규정상 둘을 교차
-조합할 수 없으므로 각각 별도 원소로 담고 `match_key`를 같은 값으로 넣어 묶는다
-(프런트가 이 키로 그룹을 만들어 한쪽을 고르면 나머지를 잠근다).
-한 경기에 핸디캡 항목이 둘 이상 붙는 경우도 있다(기준값이 다름).
+베트맨은 같은 실제 경기의 일반·핸디캡·언더오버에 **각각 다른 경기번호**를 준다.
+규정상 서로 교차 조합할 수 없으므로 각각 별도 원소로 담고 `match_key`를 같은 값으로
+넣어 묶는다(프런트가 이 키로 그룹을 만들어 하나를 고르면 나머지를 잠근다).
+한 경기에 핸디캡이 여러 기준값, 언더오버가 여러 구간으로 붙는 경우도 있다.
 
-핸디캡 기준값은 `winHandi`(홈 기준). `handi`는 값이 아니라 유형 코드이니 쓰지 않는다.
-기준값이 .5 단위면 무승부가 없어 `drawAllot`이 0.0이고, 그때 "무" 키는 빠진다.
+핸디캡 기준값·언더오버 구간값은 둘 다 `winHandi`(홈 기준)에 실려 온다.
+`handi`는 값이 아니라 유형 코드다(승무패 0, 정수핸디캡 2, 소수핸디캡 23, 언더오버 9).
+
+★ 언더오버 배당 매핑 — 실제 응답으로 두 번 확인함 (뒤집히면 계산이 통째로 틀어짐):
+  1) 응답이 직접 라벨을 준다. 113행 전부 winTxt='언더', loseTxt='오버', drawTxt='-'.
+     → "언더" = winAllot, "오버" = loseAllot, drawAllot은 0.0이라 자동으로 빠짐.
+  2) 확률적으로도 맞는다. 기준선 2.5→4.5로 오르면 언더는 맞기 쉬워져 배당이 내려가고
+     (1.821→1.640) 오버는 어려워져 올라간다(1.767→1.950). 뒤집혔다면 방향이 반대다.
+     오버라운드(1/언더+1/오버) 평균 1.133으로 북 마진도 정상 범위.
 
 실패해도 절대 기존 data/proto.json을 덮어쓰지 않고 exit 0으로 끝낸다.
 """
@@ -46,15 +53,24 @@ GAME_TYPE_CODE = "PPTPVE"
 
 SOCCER = "SC"
 
-# betTypNm 기준 분류. 언더오버('일반 언더오버')와 SUM('일반 홀짝')은 어디에도 없어 자동 제외.
+# betTypNm 기준 분류. SUM('일반 홀짝')은 여기에 없어 자동 제외된다.
 TYPE_GENERAL = "일반"
 TYPE_HANDICAP = "핸디캡"
+TYPE_OVERUNDER = "언더오버"
 BET_TYPE_TO_KIND = {
     "승무패": TYPE_GENERAL,
     "일반 정수핸디캡": TYPE_HANDICAP,
     "일반 소수핸디캡": TYPE_HANDICAP,
+    "일반 언더오버": TYPE_OVERUNDER,
 }
-TYPE_ORDER = {TYPE_GENERAL: 0, TYPE_HANDICAP: 1}
+TYPE_ORDER = {TYPE_GENERAL: 0, TYPE_HANDICAP: 1, TYPE_OVERUNDER: 2}
+
+# 유형별 odds 키 ↔ 응답 컬럼. 언더오버는 winTxt/loseTxt 라벨로 확인한 매핑이다.
+ODDS_FIELDS = {
+    TYPE_GENERAL: (("승", "winAllot"), ("무", "drawAllot"), ("패", "loseAllot")),
+    TYPE_HANDICAP: (("승", "winAllot"), ("무", "drawAllot"), ("패", "loseAllot")),
+    TYPE_OVERUNDER: (("언더", "winAllot"), ("오버", "loseAllot")),
+}
 
 OUT_PATH = ROOT / "data" / "proto.json"
 
@@ -129,13 +145,13 @@ def is_open(row: dict, now_ms: int) -> bool:
     return True
 
 
-def odds_of(row: dict) -> dict:
+def odds_of(row: dict, kind: str) -> dict:
     """배당은 원본 소수점 그대로. 0이거나 없으면 키를 넣지 않는다.
 
-    소수핸디캡(.5)은 무승부가 없어 drawAllot이 0.0 → "무"가 자동으로 빠진다.
+    소수핸디캡(.5)과 언더오버는 무승부가 없어 drawAllot이 0.0 → "무"가 자동으로 빠진다.
     """
     out = {}
-    for key, field in (("승", "winAllot"), ("무", "drawAllot"), ("패", "loseAllot")):
+    for key, field in ODDS_FIELDS[kind]:
         value = row.get(field)
         if isinstance(value, (int, float)) and value > 0:
             out[key] = float(value)
@@ -157,14 +173,10 @@ def match_key_of(row: dict) -> str:
     return "M%s-%s-%s" % (day, clean(row.get("homeId")), clean(row.get("awayId")))
 
 
-def handicap_of(row: dict, kind: str) -> float | None:
-    """핸디캡 기준값(홈 기준). 일반 유형이면 None."""
-    if kind != TYPE_HANDICAP:
-        return None
+def line_value(row: dict) -> float | None:
+    """핸디캡 기준값 / 언더오버 구간값. 둘 다 winHandi(홈 기준)에 실려 온다."""
     value = row.get("winHandi")
-    if isinstance(value, (int, float)):
-        return float(value)
-    return None
+    return float(value) if isinstance(value, (int, float)) else None
 
 
 def build_payload(session: requests.Session, entry: dict) -> dict:
@@ -191,7 +203,7 @@ def build_payload(session: requests.Session, entry: dict) -> dict:
     sortable = []
     no_odds = 0
     for row, kind in open_rows:
-        odds = odds_of(row)
+        odds = odds_of(row, kind)
         if not odds:
             # 배당 미정(protoStatus=1). 담아 봐야 고를 수 없으므로 뺀다.
             no_odds += 1
@@ -207,11 +219,15 @@ def build_payload(session: requests.Session, entry: dict) -> dict:
             "no": int(row["matchSeq"]),
             "match_key": key,
             "type": kind,
-            "handicap": handicap_of(row, kind),
             "home": home,
             "away": away,
             "odds": odds,
         }
+        # 일반은 handicap: null, 핸디캡은 값, 언더오버는 line에 구간값.
+        if kind == TYPE_OVERUNDER:
+            game["line"] = line_value(row)
+        else:
+            game["handicap"] = line_value(row) if kind == TYPE_HANDICAP else None
         league = clean(row.get("leagueShortName")) or clean(row.get("leagueName"))
         if league:
             game["league"] = league
@@ -232,14 +248,15 @@ def build_payload(session: requests.Session, entry: dict) -> dict:
     for g in games:
         kinds[g["type"]] = kinds.get(g["type"], 0) + 1
     log(
-        "축구 일반+핸디캡 %d항목 중 발매중 %d항목 → 배당 있는 %d항목 담음 "
-        "(일반 %d, 핸디캡 %d / 실제 %d경기, 배당 미정 %d항목 제외)"
+        "축구 3유형 %d항목 중 발매중 %d항목 → 배당 있는 %d항목 담음 "
+        "(일반 %d, 핸디캡 %d, 언더오버 %d / 실제 %d경기, 배당 미정 %d항목 제외)"
         % (
             len(targets),
             len(open_rows),
             len(games),
             kinds.get(TYPE_GENERAL, 0),
             kinds.get(TYPE_HANDICAP, 0),
+            kinds.get(TYPE_OVERUNDER, 0),
             match_count,
             no_odds,
         )
@@ -272,12 +289,24 @@ def validate(payload: dict) -> None:
         raise ValueError("경기번호가 중복됨")
 
     for g in games:
-        if g["type"] not in (TYPE_GENERAL, TYPE_HANDICAP):
-            raise ValueError("%s번 항목의 type이 이상함: %r" % (g["no"], g["type"]))
-        if g["type"] == TYPE_GENERAL and g["handicap"] is not None:
-            raise ValueError("%s번 일반 항목에 핸디캡 값이 붙어 있음" % g["no"])
+        no, kind, keys = g["no"], g["type"], set(g["odds"])
+        if kind not in TYPE_ORDER:
+            raise ValueError("%s번 항목의 type이 이상함: %r" % (no, kind))
         if not g.get("match_key"):
-            raise ValueError("%s번 항목에 match_key가 없음" % g["no"])
+            raise ValueError("%s번 항목에 match_key가 없음" % no)
+
+        if kind == TYPE_OVERUNDER:
+            if g.get("line") is None:
+                raise ValueError("%s번 언더오버 항목에 line이 없음" % no)
+            if not keys <= {"언더", "오버"}:
+                raise ValueError("%s번 언더오버 항목의 odds 키가 이상함: %s" % (no, sorted(keys)))
+        else:
+            if not keys <= {"승", "무", "패"}:
+                raise ValueError("%s번 %s 항목의 odds 키가 이상함: %s" % (no, kind, sorted(keys)))
+            if kind == TYPE_GENERAL and g["handicap"] is not None:
+                raise ValueError("%s번 일반 항목에 핸디캡 값이 붙어 있음" % no)
+            if kind == TYPE_HANDICAP and g["handicap"] is None:
+                raise ValueError("%s번 핸디캡 항목에 기준값이 없음" % no)
 
     if not payload.get("round"):
         raise ValueError("회차 번호가 비어 있음")
