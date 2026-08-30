@@ -214,7 +214,8 @@ Actions 로그에 `[실패]`로 시작하는 줄이 보이면 그때가 손으�
 ├─ index.html              # 승무패 + 승부식 통합 계산기, 탭 UI (Pages 루트에서 서빙)
 ├─ archive/
 │  ├─ index_v1.html        # 승무패 전용이던 최초 버전
-│  └─ index_merged.html    # 탭 도입 전, 두 계산기를 세로로 이어 붙였던 버전
+│  ├─ index_merged.html    # 탭 도입 전, 두 계산기를 세로로 이어 붙였던 버전
+│  └─ index_tabs_v1.html   # 탭 도입 첫 버전 (언더오버 지원 전)
 ├─ data/
 │  ├─ games.json           # 승무패 회차 — 자동 갱신
 │  └─ proto.json           # 승부식 배당 — 자동 갱신

@@ -181,10 +181,8 @@ h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
 .pz-no{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:#8a8471;border-radius:5px;padding:2px 5px}
 .pz-tag{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;background:#e3ddc8;color:#6d6754}
 .pz-tag.hd{background:#dfe6f2;color:#3a5183}
-.pz-tag.uo{background:#e0efe4;color:#2f6340}
 .pz-hint{font-size:10.5px;color:var(--ink-dim)}
 .pz-row{display:grid;grid-template-columns:1fr 1fr 1fr 38px;gap:7px;align-items:center}
-.pz-row.two{grid-template-columns:1fr 1fr 38px}
 .pz-od{
   height:50px;border-radius:10px;border:1.5px solid #cfc7ae;background:var(--cell);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
@@ -281,7 +279,7 @@ h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
   <!-- ══ 승부식 ══ -->
   <section class="pane" id="panePZ" role="tabpanel" aria-labelledby="tabPZ" hidden>
     <p class="hint" id="pzRound">회차 정보를 불러오는 중…</p>
-    <p class="hint">버튼에 <b>배당</b>이 같이 적혀 있어요. 한 경기에 일반·핸디캡·언더오버가 함께 나오는데, 규정상 같은 경기끼리는 조합할 수 없어서 하나를 고르면 나머지가 잠깁니다.</p>
+    <p class="hint">버튼에 <b>배당</b>이 같이 적혀 있어요. 같은 경기의 일반과 핸디캡은 함께 걸 수 없어서 한쪽을 고르면 나머지가 잠깁니다.</p>
 
     <div class="tools">
       <label class="unit-ctl">조합당 <input id="pzUnit" type="number" inputmode="numeric" value="1000" min="100" step="100"> 원</label>
@@ -324,9 +322,8 @@ h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
 
 <script>
 var OUT = ['승','무','패'];
-var UO  = ['언더','오버'];
-var CLS = {'승':'w','무':'d','패':'l','오버':'w','언더':'l'};
-var INK = {'승':'w-ink','무':'d-ink','패':'l-ink','오버':'w-ink','언더':'l-ink'};
+var CLS = {'승':'w','무':'d','패':'l'};
+var INK = {'승':'w-ink','무':'d-ink','패':'l-ink'};
 function fmtN(n){ return n.toLocaleString('ko-KR'); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -565,32 +562,15 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
   var onlyBtn = document.getElementById('pzOnly');
 
   function od(n){ return (Math.round(n * 100) / 100).toFixed(2); }
-  function outsOf(i){ return games[i].type === '언더오버' ? UO : OUT; }
   function count(i){ var c = 0; for (var o in picks[i]) c++; return c; }
-  function list(i){
-    var a = [], os = outsOf(i);
-    for (var k = 0; k < os.length; k++) if (picks[i][os[k]]) a.push(os[k]);
-    return a;
-  }
-  function availOf(i){
-    var a = [], os = outsOf(i), odds = games[i].odds || {};
-    for (var k = 0; k < os.length; k++) if (odds[os[k]] > 0) a.push(os[k]);
-    return a;
-  }
+  function list(i){ var a = []; for (var k = 0; k < 3; k++) if (picks[i][OUT[k]]) a.push(OUT[k]); return a; }
   function groupPicked(members){ for (var m = 0; m < members.length; m++) if (count(members[m]) > 0) return true; return false; }
 
-  function itemLabel(g){
-    if (g.type === '핸디캡') {
-      var v = g.handicap;
-      if (v == null) return { text: '핸디캡', cls: 'hd' };
-      v = Number(v);
-      return { text: '핸디캡 ' + (v > 0 ? '+' : '') + v.toFixed(1), cls: 'hd' };
-    }
-    if (g.type === '언더오버') {
-      var l = g.line != null ? g.line : g.handicap;
-      return { text: l != null ? 'U/O ' + Number(l).toFixed(1) : '언더오버', cls: 'uo' };
-    }
-    return { text: '일반', cls: '' };
+  function hdLabel(g){
+    if (g.type !== '핸디캡') return null;
+    if (g.handicap == null) return '핸디캡';
+    var v = Number(g.handicap);
+    return '핸디캡 ' + (v > 0 ? '+' : '') + v.toFixed(1);
   }
   function dayOf(g){
     var s = g.kickoff || '';
@@ -643,14 +623,14 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
           + (first.kickoff ? '<span class="pz-kt">' + esc(first.kickoff) + '</span>' : '')
           + '<span class="pz-tm">' + esc(first.home || '?') + ' vs ' + esc(first.away || '?') + '</span></div>';
     for (var m = 0; m < members.length; m++) {
-      var i = members[m], g = games[i], lab = itemLabel(g), os = outsOf(i);
+      var i = members[m], g = games[i], hd = hdLabel(g);
       h += '<div class="pz-item" data-item="' + i + '"><div class="pz-ihd">'
          + '<span class="pz-no">' + esc(g.no != null ? g.no : (i + 1)) + '</span>'
-         + '<span class="pz-tag' + (lab.cls ? ' ' + lab.cls : '') + '">' + esc(lab.text) + '</span>'
+         + '<span class="pz-tag' + (hd ? ' hd' : '') + '">' + esc(hd || '일반') + '</span>'
          + (members.length > 1 && m === 0 ? '<span class="pz-hint">같은 경기끼리 조합 불가</span>' : '')
-         + '</div><div class="pz-row' + (os.length === 2 ? ' two' : '') + '">';
-      for (var k = 0; k < os.length; k++) {
-        var o = os[k], r = g.odds ? g.odds[o] : null;
+         + '</div><div class="pz-row">';
+      for (var k = 0; k < 3; k++) {
+        var o = OUT[k], r = g.odds ? g.odds[o] : null;
         var dis = (r == null || !(r > 0)) ? ' disabled' : '';
         h += '<button type="button" class="pz-od ' + CLS[o] + '" data-i="' + i + '" data-o="' + o + '"' + dis
            + ' aria-pressed="false"><span class="o">' + o + '</span>'
@@ -685,7 +665,8 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
     var chk = e.target.closest('.chk');
     if (chk) {
       if (chk.disabled) return;
-      var ci = +chk.dataset.i, avail = availOf(ci);
+      var ci = +chk.dataset.i, avail = [];
+      for (var k = 0; k < 3; k++) { var r = games[ci].odds ? games[ci].odds[OUT[k]] : null; if (r > 0) avail.push(OUT[k]); }
       setGame(ci, count(ci) === avail.length ? [] : avail);
       lockGroups(); update(); return;
     }
@@ -709,10 +690,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
       btns[j].setAttribute('aria-pressed', on ? 'true' : 'false');
     }
     var c = rowsEl.querySelector('.chk[data-i="' + i + '"]');
-    if (c) {
-      var n = count(i) > 0 && count(i) === availOf(i).length;
-      c.classList.toggle('on', n); c.setAttribute('aria-pressed', n ? 'true' : 'false');
-    }
+    if (c) { var n = count(i) >= 2; c.classList.toggle('on', n); c.setAttribute('aria-pressed', n ? 'true' : 'false'); }
   }
 
   unitEl.addEventListener('input', update);
@@ -753,13 +731,11 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
   }
 
   function chip(i, o, isVar){
-    var g = games[i], r = g.odds[o], lab = itemLabel(g);
-    var mark = lab.cls === 'hd' ? lab.text.replace('핸디캡 ', 'H')
-             : lab.cls === 'uo' ? lab.text : '';
+    var g = games[i], r = g.odds[o], hd = hdLabel(g);
     return '<span class="pz-chip' + (isVar ? ' var' : '') + '">'
          + '<span class="gn">' + esc(g.no != null ? g.no : (i + 1)) + '</span>'
          + '<span class="tm">' + esc(g.home || '?') + ':' + esc(g.away || '?') + '</span>'
-         + (mark ? '<span class="hd">' + esc(mark) + '</span>' : '')
+         + (hd ? '<span class="hd">' + esc(hd.replace('핸디캡 ', 'H')) + '</span>' : '')
          + '<span class="go ' + INK[o] + '">' + o + '</span>'
          + '<span class="gr">' + od(r) + '</span></span>';
   }
@@ -817,10 +793,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
     return res.json();
   }).then(function(d){
     games = (d.games || []).filter(function(g){
-      if (!g || !g.odds) return false;
-      var os = g.type === '언더오버' ? UO : OUT;
-      for (var k = 0; k < os.length; k++) if (g.odds[os[k]] > 0) return true;
-      return false;
+      return g && g.odds && (g.odds['승'] > 0 || g.odds['무'] > 0 || g.odds['패'] > 0);
     });
     picks = games.map(function(){ return {}; });
 
