@@ -1,105 +1,105 @@
 {
-  "round": "52",
-  "updated": "2026-09-10T11:33:18+09:00",
+  "round": "53",
+  "updated": "2026-09-14T11:50:12+09:00",
   "games": [
     {
       "no": 1,
-      "home": "A빌라",
-      "away": "노팅엄F",
-      "league": "잉글랜드 프리미어리그",
-      "kickoff": "9/12(토) 23:00"
+      "home": "오모니아",
+      "away": "셀타비고",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/17(목) 01:45"
     },
     {
       "no": 2,
-      "home": "본머스",
-      "away": "브렌트퍼",
-      "league": "잉글랜드 프리미어리그",
-      "kickoff": "9/12(토) 23:00"
+      "home": "아라라트",
+      "away": "스파프라",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/17(목) 01:45"
     },
     {
       "no": 3,
-      "home": "크리스털",
-      "away": "입스위치",
-      "league": "잉글랜드 프리미어리그",
-      "kickoff": "9/12(토) 23:00"
+      "home": "AC밀란",
+      "away": "SL벤피카",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/17(목) 04:00"
     },
     {
       "no": 4,
-      "home": "리버풀",
-      "away": "풀럼",
-      "league": "잉글랜드 프리미어리그",
-      "kickoff": "9/12(토) 23:00"
+      "home": "안더레흐",
+      "away": "리옹",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/17(목) 04:00"
     },
     {
       "no": 5,
-      "home": "오사수나",
-      "away": "에스파뇰",
-      "league": "스페인 라리가",
-      "kickoff": "9/12(토) 23:15"
+      "home": "S그라츠",
+      "away": "스타드렌",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/17(목) 04:00"
     },
     {
       "no": 6,
-      "home": "토트넘",
-      "away": "에버턴",
-      "league": "잉글랜드 프리미어리그",
-      "kickoff": "9/13(일) 01:30"
+      "home": "선덜랜드",
+      "away": "알크마르",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/17(목) 04:00"
     },
     {
       "no": 7,
-      "home": "A빌바오",
-      "away": "엘체",
-      "league": "스페인 라리가",
-      "kickoff": "9/13(일) 01:30"
+      "home": "H베르셰",
+      "away": "D자그레",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/17(목) 04:00"
     },
     {
       "no": 8,
-      "home": "선덜랜드",
-      "away": "아스널",
-      "league": "잉글랜드 프리미어리그",
-      "kickoff": "9/13(일) 04:00"
+      "home": "OFI크레",
+      "away": "호펜하임",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/18(금) 01:45"
     },
     {
       "no": 9,
-      "home": "셀타비고",
-      "away": "말라가",
-      "league": "스페인 라리가",
-      "kickoff": "9/13(일) 21:00"
+      "home": "L소피아",
+      "away": "잘츠부르",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/18(금) 01:45"
     },
     {
       "no": 10,
-      "home": "코번트리",
-      "away": "브라이턴",
-      "league": "잉글랜드 프리미어리그",
-      "kickoff": "9/13(일) 22:00"
+      "home": "소시에다",
+      "away": "본머스",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/18(금) 04:00"
     },
     {
       "no": 11,
-      "home": "레반테",
-      "away": "바르셀로",
-      "league": "스페인 라리가",
-      "kickoff": "9/13(일) 23:15"
+      "home": "플젠",
+      "away": "위니옹SG",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/18(금) 04:00"
     },
     {
       "no": 12,
-      "home": "맨체스U",
-      "away": "맨체스C",
-      "league": "잉글랜드 프리미어리그",
-      "kickoff": "9/14(월) 00:30"
+      "home": "셀틱",
+      "away": "페렌츠바",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/18(금) 04:00"
     },
     {
       "no": 13,
-      "home": "헤타페",
-      "away": "데포아코",
-      "league": "스페인 라리가",
-      "kickoff": "9/14(월) 01:30"
+      "home": "베식타시",
+      "away": "마르세유",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/18(금) 04:00"
     },
     {
       "no": 14,
-      "home": "소시에다",
-      "away": "AT마드",
-      "league": "스페인 라리가",
-      "kickoff": "9/14(월) 04:00"
+      "home": "릴레스트",
+      "away": "토렌세",
+      "league": "UEFA 유로파리그",
+      "kickoff": "9/18(금) 04:00"
     }
   ],
-  "deadline": "9/12(토) 23:00"
+  "deadline": "9/16(수) 23:00"
 }
