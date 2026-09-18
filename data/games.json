@@ -1,105 +1,105 @@
 {
-  "round": "53",
-  "updated": "2026-09-14T11:50:12+09:00",
+  "round": "54",
+  "updated": "2026-09-18T11:38:26+09:00",
   "games": [
     {
       "no": 1,
-      "home": "오모니아",
-      "away": "셀타비고",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/17(목) 01:45"
+      "home": "브라이턴",
+      "away": "아스널",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "9/19(토) 23:00"
     },
     {
       "no": 2,
-      "home": "아라라트",
-      "away": "스파프라",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/17(목) 01:45"
+      "home": "에버턴",
+      "away": "입스위치",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "9/19(토) 23:00"
     },
     {
       "no": 3,
-      "home": "AC밀란",
-      "away": "SL벤피카",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/17(목) 04:00"
+      "home": "뉴캐슬U",
+      "away": "헐시티",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "9/19(토) 23:00"
     },
     {
       "no": 4,
-      "home": "안더레흐",
-      "away": "리옹",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/17(목) 04:00"
+      "home": "A빌바오",
+      "away": "알라베스",
+      "league": "스페인 라리가",
+      "kickoff": "9/19(토) 23:15"
     },
     {
       "no": 5,
-      "home": "S그라츠",
-      "away": "스타드렌",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/17(목) 04:00"
+      "home": "노팅엄F",
+      "away": "코번트리",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "9/20(일) 01:30"
     },
     {
       "no": 6,
-      "home": "선덜랜드",
-      "away": "알크마르",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/17(목) 04:00"
+      "home": "셀타비고",
+      "away": "라싱산탄",
+      "league": "스페인 라리가",
+      "kickoff": "9/20(일) 01:30"
     },
     {
       "no": 7,
-      "home": "H베르셰",
-      "away": "D자그레",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/17(목) 04:00"
+      "home": "헤타페",
+      "away": "말라가",
+      "league": "스페인 라리가",
+      "kickoff": "9/20(일) 21:00"
     },
     {
       "no": 8,
-      "home": "OFI크레",
-      "away": "호펜하임",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/18(금) 01:45"
+      "home": "본머스",
+      "away": "리버풀",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "9/20(일) 22:00"
     },
     {
       "no": 9,
-      "home": "L소피아",
-      "away": "잘츠부르",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/18(금) 01:45"
+      "home": "리즈U",
+      "away": "크리스털",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "9/20(일) 22:00"
     },
     {
       "no": 10,
-      "home": "소시에다",
-      "away": "본머스",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/18(금) 04:00"
+      "home": "AT마드",
+      "away": "레알마드",
+      "league": "스페인 라리가",
+      "kickoff": "9/20(일) 23:15"
     },
     {
       "no": 11,
-      "home": "플젠",
-      "away": "위니옹SG",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/18(금) 04:00"
+      "home": "풀럼",
+      "away": "맨체스U",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "9/21(월) 00:30"
     },
     {
       "no": 12,
-      "home": "셀틱",
-      "away": "페렌츠바",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/18(금) 04:00"
+      "home": "데포아코",
+      "away": "베티스",
+      "league": "스페인 라리가",
+      "kickoff": "9/21(월) 01:30"
     },
     {
       "no": 13,
-      "home": "베식타시",
-      "away": "마르세유",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/18(금) 04:00"
+      "home": "비야레알",
+      "away": "레반테",
+      "league": "스페인 라리가",
+      "kickoff": "9/21(월) 01:30"
     },
     {
       "no": 14,
-      "home": "릴레스트",
-      "away": "토렌세",
-      "league": "UEFA 유로파리그",
-      "kickoff": "9/18(금) 04:00"
+      "home": "발렌시아",
+      "away": "소시에다",
+      "league": "스페인 라리가",
+      "kickoff": "9/21(월) 04:00"
     }
   ],
-  "deadline": "9/16(수) 23:00"
+  "deadline": "9/19(토) 23:00"
 }
