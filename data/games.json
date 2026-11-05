@@ -1,105 +1,105 @@
 {
-  "round": "66",
-  "updated": "2026-11-02T12:49:53+09:00",
+  "round": "67",
+  "updated": "2026-11-05T13:38:59+09:00",
   "games": [
     {
       "no": 1,
-      "home": "SH도네츠",
-      "away": "스포르CP",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/4(수) 02:45"
+      "home": "풀럼",
+      "away": "뉴캐슬U",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "11/8(일) 00:00"
     },
     {
       "no": 2,
-      "home": "갈라타사",
-      "away": "슈투트가",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/4(수) 02:45"
+      "home": "에스파뇰",
+      "away": "데포아코",
+      "league": "스페인 라리가",
+      "kickoff": "11/8(일) 00:15"
     },
     {
       "no": 3,
-      "home": "AT마드",
-      "away": "바이뮌헨",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/4(수) 05:00"
+      "home": "노팅엄F",
+      "away": "맨체스C",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "11/8(일) 02:30"
     },
     {
       "no": 4,
-      "home": "맨체스U",
-      "away": "AS로마",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/4(수) 05:00"
+      "home": "오사수나",
+      "away": "A빌바오",
+      "league": "스페인 라리가",
+      "kickoff": "11/8(일) 02:30"
     },
     {
       "no": 5,
-      "home": "페예노르",
-      "away": "인테르",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/4(수) 05:00"
+      "home": "엘체",
+      "away": "베티스",
+      "league": "스페인 라리가",
+      "kickoff": "11/8(일) 22:00"
     },
     {
       "no": 6,
-      "home": "보되글림",
-      "away": "릴OSC",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/4(수) 05:00"
+      "home": "브라이턴",
+      "away": "브렌트퍼",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "11/8(일) 23:00"
     },
     {
       "no": 7,
-      "home": "비야레알",
-      "away": "PSG",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/4(수) 05:00"
+      "home": "크리스털",
+      "away": "리버풀",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "11/8(일) 23:00"
     },
     {
       "no": 8,
-      "home": "LASK",
-      "away": "슬로반브",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/4(수) 05:00"
+      "home": "입스위치",
+      "away": "본머스",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "11/8(일) 23:00"
     },
     {
       "no": 9,
-      "home": "페네르SK",
-      "away": "리버풀",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/5(목) 02:45"
+      "home": "선덜랜드",
+      "away": "첼시",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "11/8(일) 23:00"
     },
     {
       "no": 10,
-      "home": "도르트문",
-      "away": "베티스",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/5(목) 05:00"
+      "home": "소시에다",
+      "away": "라요바예",
+      "league": "스페인 라리가",
+      "kickoff": "11/9(월) 00:15"
     },
     {
       "no": 11,
-      "home": "포르투",
-      "away": "나폴리",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/5(목) 05:00"
+      "home": "맨체스U",
+      "away": "A빌라",
+      "league": "잉글랜드 프리미어리그",
+      "kickoff": "11/9(월) 01:30"
     },
     {
       "no": 12,
-      "home": "PSV",
-      "away": "클뤼브뤼",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/5(목) 05:00"
+      "home": "셀타비고",
+      "away": "레반테",
+      "league": "스페인 라리가",
+      "kickoff": "11/9(월) 02:30"
     },
     {
       "no": 13,
-      "home": "라이프치",
-      "away": "맨체스C",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/5(목) 05:00"
+      "home": "비야레알",
+      "away": "헤타페",
+      "league": "스페인 라리가",
+      "kickoff": "11/9(월) 02:30"
     },
     {
       "no": 14,
-      "home": "비킹FK",
-      "away": "사바FK",
-      "league": "UEFA 챔피언스리그",
-      "kickoff": "11/5(목) 05:00"
+      "home": "AT마드",
+      "away": "바르셀로",
+      "league": "스페인 라리가",
+      "kickoff": "11/9(월) 05:00"
     }
   ],
-  "deadline": "11/3(화) 23:00"
+  "deadline": "11/7(토) 23:00"
 }
